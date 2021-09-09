@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "GraphNode.hpp"
+#include "Representation.hpp"
 #include "List.hpp"
 #include "Queue.hpp"
 
@@ -19,6 +20,8 @@ public:
     void Depth();
     void ShortestPath();
     void Transpose();
+
+    void Summary();
 
 private:
     /**
@@ -148,3 +151,9 @@ void Graph<I>::ShortestPath(Node* s, Node* v) {}
 
 template <typename I>
 void Graph<I>::Transpose(Graph& g) {}
+    
+
+template <typename I>
+void Graph<I>::Summary() {
+    Representation<I>{ set }.Print();
+}

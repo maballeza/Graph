@@ -149,6 +149,7 @@
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Node.hpp" />
     <ClInclude Include="Queue.hpp" />
+    <ClInclude Include="Representation.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graph.cpp" />

@@ -21,6 +21,7 @@ Graph<I> DebugGraph(std::vector<std::vector<I>>& strings) {
     g.Breadth();
     g.Depth();
     g.ShortestPath();
+    g.Summary();
 
     return g;
 }
