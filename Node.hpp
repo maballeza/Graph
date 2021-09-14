@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+
 template <typename I>
 struct BaseNode {
     I item;
@@ -38,7 +40,7 @@ template <template <typename> class N, typename I>
 struct HNode {
     using Node = N<I>;
     HNode(Node* n) : node{ n } {};
-    HNode(HNode&& hn);
+    HNode(HNode&& hn) : node{ hn.Release() } {}
     ~HNode() { delete node; node = nullptr; }
     Node& operator*() { return *node; }
     Node* operator->() { return node; }
@@ -47,7 +49,7 @@ struct HNode {
 };
 
 template <template <typename> class N, typename I>
-struct Build : N<I> {
+struct Acquire : N<I> {
     using Node = N<I>;
     static HNode<N, I> Instance(I&& i) { return HNode<N, I>{ typename Node::template Allocate<Node>(std::forward<I>(i)) }; }
 };

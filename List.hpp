@@ -39,7 +39,7 @@ public:
     *   Inserts values at the head of the list.
     */
     Node* Insert(I&& i);
-    Node* Insert(Node* n);  // Build<N, I>::Instance() should be used to create a Node*.
+    Node* Insert(Node* n);  // Acquire<N, I>::Instance() should be used to create a Node*.
     void Delete(Node** n);
     Handle Release(I&& i);
 
@@ -98,7 +98,7 @@ typename List<N, I>::Node* List<N, I>::Search(const I& i) {
 
 template <template <typename> class N, typename I>
 typename List<N, I>::Node* List<N, I>::Insert(I&& i) {
-    return Insert(Build<N, I>::Instance(std::forward<I>(i)).Release());
+    return Insert(Acquire<N, I>::Instance(std::forward<I>(i)).Release());
 }
 
 #ifndef FORWARD
@@ -138,7 +138,7 @@ template <template <typename> class N, typename I>
 typename List<N, I>::Handle List<N, I>::Release(I&& i) {
     auto n = Search(i);
     Delete(&n);
-    return Build<N, I>::Instance(std::forward<I>(i));
+    return Acquire<N, I>::Instance(std::forward<I>(i));
 }
 
 #ifndef FORWARD

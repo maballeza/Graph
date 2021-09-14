@@ -18,12 +18,13 @@
     <Text Include="Doc\Example.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Doc\Test\Output.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graph.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphNode.hpp">
+    <ClInclude Include="Vertices.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="List.hpp">
@@ -35,7 +36,7 @@
     <ClInclude Include="Queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Representation.hpp">
+    <ClInclude Include="Doc\Test\Input.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

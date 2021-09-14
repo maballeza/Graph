@@ -6,7 +6,7 @@
 *   Template parameter N should
 *       possess a member "N* next" (forward lists),
 *       and (optionally) also a member "N* prev" (bidirectional lists), 
-*       and be allocated using Build::Instance()
+*       and be allocated using Acquire::Instance()
 */
 template <template <typename> class N, typename I>
 class Queue {
@@ -73,11 +73,9 @@ typename Queue<N, I>::Node* Queue<N, I>::Dequeue() {
             head->next = temp->next->next;
         }
         --size;
-        return HNode{ temp }.Release();
-    }
-    else {
         return temp;
     }
+    return nullptr;
 }
 
 #ifdef NDEBUG
@@ -88,11 +86,9 @@ inline typename Queue<N, std::string>::Node* Queue<N, std::string>::Dequeue() {
             head->next = temp->next->next;
         }
         --size;
-        return HNode{ temp }.Release();
-    }
-    else {
         return temp;
     }
+    return nullptr;
 }
 #endif
 
