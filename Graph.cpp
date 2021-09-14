@@ -38,7 +38,7 @@ int main()
 {
     std::vector<std::vector<const char*>> undirected_input {
         { "a", "b", "c", "d", "e", "f" },
-        { "b", "c", "f" },
+        { "b", "c", "f", "a" },
         { "c", "d", "b", "a" },
         { "d", "e", "c", "a" },
         { "e", "f", "d", "a" },

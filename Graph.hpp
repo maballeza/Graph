@@ -31,7 +31,7 @@ public:
 
 private:
     Vertex* AcquireVertex(I&& list_head);
-    static Vertex* Normalize(Graph& g, Vertex* list_v);
+    static Vertex* Normalize(const Graph& g, const Vertex* list_v);
 
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
@@ -45,13 +45,13 @@ private:
 };
 
 template <typename I>
-Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept :
-    vertices{ lists.size() }
+Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
+    : vertices{ lists.size() }
 {
     for (std::vector<I>& list : lists) {
         auto head = list.begin();
-        Vertex* v = AcquireVertex(std::forward<I>(*(head)));
-        vertices[v] = vertices.BuildEdge(v, {++head, list.end()});
+        Vertex* v = AcquireVertex(std::forward<I>(*head));
+        vertices[v] = vertices.BuildEdge({ ++head, list.end() });
         set.push_back(v);
     }
 }
@@ -72,9 +72,8 @@ Vertex<I>* Graph<I>::AcquireVertex(I&& list_head)
 }
 
 template <typename I>
-Vertex<I>* Graph<I>::Normalize(Graph& g, Vertex* list_v)
+Vertex<I>* Graph<I>::Normalize(const Graph& g, const Vertex* list_v)
 {
-    //return g.V.map[list_v];
     for (auto& v : g.set) {
         if (v->item == list_v->item) {
             return v;
@@ -122,9 +121,10 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
     Q.Enqueue(source);
     while (Vertex* u = Q.Dequeue()) {
         u->s = Vertex::Status::f;
-        for (Vertex* v : g.vertices[u]) {
+        for (auto v : g.vertices[u]) {
             Vertex* w = Normalize(g, v);
             if (w->s == Vertex::Status::nf) {
+                w->s = Vertex::Status::f;
                 w->p = u;
                 w->dist = u->dist + 1;
                 Q.Enqueue(w);
@@ -176,5 +176,5 @@ void Graph<I>::Transpose(Graph& g)
 template <typename I>
 void Graph<I>::Summarize(std::ostream& os)
 {
-    Summary<I>{ set, os }.Print();
+    Summary<I> { set, os }.Print();
 }

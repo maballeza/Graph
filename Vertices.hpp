@@ -13,9 +13,9 @@ template <typename I>
 struct Vertex : BaseNode<I> {
     enum Status { nf, f, d };   // Not found, found, discovered.
 
-    Vertex(I&& i) :
-        BaseNode<I>(std::forward<I>(i)),
-        s{}, dist{}, t_found{}, t_disc{}, p{}, next{}, prev{}
+    Vertex(I&& i)
+        : BaseNode<I>(std::forward<I>(i)),
+          s{}, dist{}, t_found{}, t_disc{}, p{}, next{}, prev{}
     {
     }
     ~Vertex() = default;
@@ -38,13 +38,13 @@ public:
     using Vertex = Vertex<I>;
     using Edges = std::unordered_map<Vertex*, List<V, I>>;
 
-    Vertices(int t) : 
-        total{ t }, count{} 
+    Vertices(int t)
+        : total{ t + 1 }, count{}
     { 
         set[nullptr]; // Signals non-membership of a queried vertex.
     }
 
-    List<V, I> BuildEdge(Vertex*, const std::vector<I>&);
+    List<V, I> BuildEdge(const std::vector<I>&);
     List<V, I>& operator[](Vertex*);
 
 private:
@@ -70,7 +70,7 @@ List<V, I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
-List<V, I> Vertices<I>::BuildEdge(Vertex* v, const std::vector<I>& relations)
+List<V, I> Vertices<I>::BuildEdge(const std::vector<I>& relations)
 {
     List<V, I> l;
     for (I item : relations) {
@@ -85,10 +85,10 @@ struct Summary {
     using Vertex = Vertex<I>;
     using string = std::string;
 
-    Summary(std::vector<Vertex*>& vertices, std::ostream& os = std::cout) :
-        vertices{ vertices }, os{ os },
-        header{ "Vertex", "Distance", "Time Found", "Time Discovered", "Parent", "Status" },
-        statuses{ "Not Found", "Found", "Discovered" }
+    Summary(std::vector<Vertex*>& vertices, std::ostream& os = std::cout)
+        : vertices{ vertices }, os{ os },
+          header{ "Vertex", "Distance", "Time Found", "Time Discovered", "Parent", "Status" },
+          statuses{ "Not Found", "Found", "Discovered" }
     {
     }
 
@@ -116,7 +116,7 @@ std::string Summary<I>::SafeStringConversion(Vertex* v, char alternative) const
     if constexpr (std::is_same_v<I, string> || std::is_convertible_v<I, string>) {
         return v->item;
     }
-    return string{ alternative };
+    return string { alternative };
 }
 
 template <typename I>
@@ -124,7 +124,7 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
 {
     const int size = header.size();
     if (!v) {
-        std::vector<string> empty(size, string{ default_char });
+        std::vector<string> empty(size, string { default_char });
         return empty;
     }
 
@@ -132,22 +132,21 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
     const auto distance        = std::to_string(v->dist);
     const auto time_found      = std::to_string(v->t_found);
     const auto time_discovered = std::to_string(v->t_disc);
-    const auto parent          = v->p ? SafeStringConversion(v->p) : string{ default_char };
+    const auto parent          = v->p ? SafeStringConversion(v->p) : string { default_char };
     string status {};
     switch (v->s) {
-        case Vertex::Status::nf : {
-            status = "Not Found";
-            break;
-        }
-        case Vertex::Status::f : {
-            status = "Found";
-            break;
-        }
-        case Vertex::Status::d : {
-            status = "Discovered";
-            break;
-        }
+    case Vertex::Status::nf : {
+        status = "Not Found";
+        break;
     }
+    case Vertex::Status::f : {
+        status = "Found";
+        break;
+    }
+    case Vertex::Status::d : {
+        status = "Discovered";
+        break;
+    }}
 
     return { name, distance, time_found, time_discovered, parent, status };
 }
@@ -155,7 +154,7 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
 template <typename I>
 std::string Summary<I>::Header() const
 {
-    std::ostringstream oss{};
+    std::ostringstream oss {};
     for (const auto& col_name : header) {
         oss << std::setw(col_width) << std::right << col_name;
     }
@@ -165,7 +164,7 @@ std::string Summary<I>::Header() const
 template <typename I>
 std::string Summary<I>::Body() const
 {
-    std::ostringstream oss{};
+    std::ostringstream oss {};
     for (const auto& n : vertices) {
         for (const auto& r : Summarize(n)) {
             oss << std::setw(col_width) << std::right << r;
