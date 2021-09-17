@@ -19,7 +19,7 @@ public:
     *   A set of lists, each containing a set of vertices signaling the direct descendancy of each one to the first.
     */
     Graph(std::vector<std::vector<I>>& lists) noexcept;
-    Graph(Graph&&) = default;
+    Graph(Graph&&) noexcept;
     ~Graph();
 
     void Breadth(int v);
@@ -39,14 +39,14 @@ private:
     static void ShortestPath(Vertex* s, Vertex* v);
     static void Transpose(Graph& g);
 
-    int time;
-    std::vector<Vertex*> set;
     Vertices vertices;
+    std::vector<Vertex*> set;
+    int time;
 };
 
 template <typename I>
 Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
-    : vertices{ lists.size() }
+    : vertices{ lists.size() }, set{}, time{}
 {
     for (std::vector<I>& list : lists) {
         auto head = list.begin();
@@ -54,6 +54,13 @@ Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
         vertices[v] = vertices.BuildEdge({ ++head, list.end() });
         set.push_back(v);
     }
+}
+
+template <typename I>
+Graph<I>::Graph(Graph&& g) noexcept 
+    : vertices{ std::move(g.vertices) }, set{ std::move(g.set) }, time{ g.time }
+{
+    g.time = 0;
 }
 
 template <typename I>

@@ -43,15 +43,24 @@ public:
     { 
         set[nullptr]; // Signals non-membership of a queried vertex.
     }
+    Vertices(Vertices&& v) noexcept;
+    List<V, I>& operator[](Vertex*);
 
     List<V, I> BuildEdge(const std::vector<I>&);
-    List<V, I>& operator[](Vertex*);
 
 private:
     Edges set;
     int total;  // |set|
     int count;  // Running total.
 };
+
+template <typename I>
+Vertices<I>::Vertices(Vertices&& v) noexcept
+    : set{ std::move(v.set) }, total{ v.total }, count{ v.count }
+{
+    v.total = 0;
+    v.count = 0;
+}
 
 template <typename I>
 List<V, I>& Vertices<I>::operator[](Vertex* v)
