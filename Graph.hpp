@@ -32,6 +32,7 @@ public:
 private:
     Vertex* AcquireVertex(I&& list_head);
     static Vertex* Normalize(const Graph& g, const Vertex* list_v);
+    static void Reset(Graph& g, Vertex* s = nullptr);
 
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
@@ -89,6 +90,24 @@ Vertex<I>* Graph<I>::Normalize(const Graph& g, const Vertex* list_v)
 }
 
 template <typename I>
+void Graph<I>::Reset(Graph& g, Vertex* source)
+{
+    for (Vertex* v : g.set) {
+        if (v != source) {
+            v->dist = 100000;
+            v->s = Vertex::Status::nf;
+            v->t_disc = 0;
+            v->t_found = 0;
+            v->p = nullptr;
+        }
+    }
+    if (source) {
+        source->dist = 0;
+        source->p = nullptr;
+    }
+}
+
+template <typename I>
 void Graph<I>::Breadth(int vertex)
 {
     const size_t s = set.size();
@@ -118,12 +137,7 @@ void Graph<I>::Transpose()
 template <typename I>
 void Graph<I>::Breadth(Graph& g, Vertex* source)
 {
-    for (Vertex* k : g.set) {
-        k->dist = 1000000;
-        k->s = Vertex::Status::nf;
-        k->p = nullptr;
-    }
-    source->dist = 0;
+    Graph::Reset(g, source);
     Queue<V, I> Q;
     Q.Enqueue(source);
     while (Vertex* u = Q.Dequeue()) {
@@ -144,12 +158,7 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
 template <typename I>
 void Graph<I>::Depth(Graph& g)
 {
-    for (Vertex* v : g.set) {
-        v->t_disc = 0;
-        v->t_found = 0;
-        v->s = Vertex::Status::nf;
-        v->p = nullptr;
-    }
+    Graph::Reset(g);
     for (Vertex* v : g.set) {
         if (v->s == Vertex::Status::nf) {
             DVisit(g, v);

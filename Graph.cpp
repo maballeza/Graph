@@ -46,7 +46,7 @@ int main()
     };
 
     std::string output {
-        "Doc\\Test\\Output.txt"
+        "Doc\\Debug\\Output.txt"
     };
     auto g = DebugGraph<const char*>(undirected_input, output);
 }
