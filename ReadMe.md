@@ -1,8 +1,10 @@
 ## *Graph*  
-> Having kept this on the backburner for a while now, I figured it was time for this project to make its debut.
-
 ### Overview  
-A first implementation for an undirected graph with methods for breadth- and depth-first searches.  
+A first implementation for an **directed** or **undirected graph** with methods for _breadth-_ and _depth-first_ searches.  
 #### To be continued...  
 - General debugging.  
-- Implementations for methods _ShortestPath()_ and _Transpose()_.  
+- Implementations for methods  
+  - [ ] _ShortestPath(source_v, v)_  
+  - [ ] _Transpose(G)_  
+  - [ ] _StronglyConnectedComponents(G)_  
+  - [ ] _AlternateShortestPath(source_v, v)_  
