@@ -33,6 +33,7 @@ private:
     Vertex* AcquireVertex(I&& list_head);
     static Vertex* Normalize(const Graph& g, const Vertex* list_v);
     static void Reset(Graph& g, Vertex* s = nullptr);
+    static bool NotFound(const Vertex*);
 
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
@@ -108,6 +109,11 @@ void Graph<I>::Reset(Graph& g, Vertex* source)
 }
 
 template <typename I>
+bool Graph<I>::NotFound(const Vertex* v) {
+    return v->s == Vertex::Status::nf;
+}
+
+template <typename I>
 void Graph<I>::Breadth(int vertex)
 {
     const size_t s = set.size();
@@ -144,7 +150,7 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
         u->s = Vertex::Status::f;
         for (auto v : g.vertices[u]) {
             Vertex* w = Normalize(g, v);
-            if (w->s == Vertex::Status::nf) {
+            if (NotFound(w)) {
                 w->s = Vertex::Status::f;
                 w->p = u;
                 w->dist = u->dist + 1;
@@ -160,7 +166,7 @@ void Graph<I>::Depth(Graph& g)
 {
     Graph::Reset(g);
     for (Vertex* v : g.set) {
-        if (v->s == Vertex::Status::nf) {
+        if (NotFound(v)) {
             DVisit(g, v);
         }
     }
@@ -172,7 +178,7 @@ void Graph<I>::DVisit(Graph& g, Vertex* v)
     v->t_found = ++g.time;
     v->s = Vertex::Status::f;
     for (Vertex* u : g.vertices[v]) {
-        if (u->s == Vertex::Status::nf) {
+        if (NotFound(u)) {
             u->p = v;
             DVisit(g, u);
         }
