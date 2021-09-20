@@ -116,7 +116,7 @@ bool Graph<I>::NotFound(const Vertex* v) {
 template <typename I>
 void Graph<I>::Breadth(int vertex)
 {
-    const size_t s = set.size();
+    const int s = set.size();
     if (0 <= vertex && vertex <= s - 1) {
         Graph::Breadth(*this, set[vertex]);
     }

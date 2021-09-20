@@ -18,9 +18,9 @@ template <typename I>
 Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, std::string& output = {})
 {
     Graph<I> g { vertices };
-
+    int s = vertices.size();
     std::ostringstream oss{};
-    for (int v_n{}; v_n < vertices.size(); ++v_n) {
+    for (int v_n{}; v_n < s; ++v_n) {
         g.Breadth(v_n);
         g.Summarize(oss);
     }
