@@ -53,7 +53,7 @@ Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
     for (std::vector<I>& list : lists) {
         auto head = list.begin();
         Vertex* v = AcquireVertex(std::forward<I>(*head));
-        vertices[v] = vertices.BuildEdge({ ++head, list.end() });
+        vertices[v] = vertices.AttachVertex({ ++head, list.end() });
         set.push_back(v);
     }
 }

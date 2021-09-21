@@ -46,7 +46,7 @@ public:
     Vertices(Vertices&& v) noexcept;
     List<V, I>& operator[](Vertex*);
 
-    List<V, I> BuildEdge(const std::vector<I>&);
+    List<V, I> AttachVertex(const std::vector<I>&);
 
 private:
     Edges set;
@@ -79,7 +79,7 @@ List<V, I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
-List<V, I> Vertices<I>::BuildEdge(const std::vector<I>& relations)
+List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& relations)
 {
     List<V, I> l;
     for (I item : relations) {
