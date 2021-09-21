@@ -47,6 +47,7 @@ public:
     List<V, I>& operator[](Vertex*);
 
     List<V, I> AttachVertex(const std::vector<I>&);
+    void AttachVertex(Vertex*, const std::vector<I>&);
 
 private:
     Edges set;
@@ -79,14 +80,20 @@ List<V, I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
-List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& relations)
+List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& edges)
 {
     List<V, I> l;
-    for (I item : relations) {
+    for (I item : edges) {
         l.Insert(std::forward<I>(item));
     }
     ++count;
     return l;
+}
+
+template <typename I>
+void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& edges)
+{
+    set[v] = AttachVertex(edges);
 }
 
 template <typename I>
