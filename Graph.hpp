@@ -31,13 +31,13 @@ public:
 
 private:
     Vertex* AcquireVertex(I&& list_head);
-    static Vertex* Normalize(const Graph& g, const Vertex* list_v);
+    static void Normalize(const Graph& g, Vertex** list_v);
     static void Reset(Graph& g, Vertex* s = nullptr);
     static bool NotFound(const Vertex*);
 
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
-    static void DVisit(Graph& g, Vertex* v);
+    static void Visit(Graph& g, Vertex* v);
     static void ShortestPath(Vertex* s, Vertex* v);
     static void Transpose(Graph& g);
 
@@ -81,11 +81,12 @@ Vertex<I>* Graph<I>::AcquireVertex(I&& list_head)
 }
 
 template <typename I>
-Vertex<I>* Graph<I>::Normalize(const Graph& g, const Vertex* list_v)
+void Graph<I>::Normalize(const Graph& g, Vertex** list_v)
 {
     for (auto& v : g.set) {
-        if (v->item == list_v->item) {
-            return v;
+        if (v->item == (*list_v)->item) {
+            *list_v = v;
+            return;
         }
     }
 }
@@ -106,6 +107,7 @@ void Graph<I>::Reset(Graph& g, Vertex* source)
         source->dist = 0;
         source->p = nullptr;
     }
+    g.time = 0;
 }
 
 template <typename I>
@@ -149,12 +151,12 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
     while (Vertex* u = Q.Dequeue()) {
         u->s = Vertex::Status::f;
         for (auto v : g.vertices[u]) {
-            Vertex* w = Normalize(g, v);
-            if (NotFound(w)) {
-                w->s = Vertex::Status::f;
-                w->p = u;
-                w->dist = u->dist + 1;
-                Q.Enqueue(w);
+            Normalize(g, &v);
+            if (NotFound(v)) {
+                v->s = Vertex::Status::f;
+                v->p = u;
+                v->dist = u->dist + 1;
+                Q.Enqueue(v);
             }
         }
         u->s = Vertex::Status::d;
@@ -167,20 +169,21 @@ void Graph<I>::Depth(Graph& g)
     Graph::Reset(g);
     for (Vertex* v : g.set) {
         if (NotFound(v)) {
-            DVisit(g, v);
+            Visit(g, v);
         }
     }
 }
 
 template <typename I>
-void Graph<I>::DVisit(Graph& g, Vertex* v)
+void Graph<I>::Visit(Graph& g, Vertex* v)
 {
     v->t_found = ++g.time;
     v->s = Vertex::Status::f;
     for (Vertex* u : g.vertices[v]) {
+        Normalize(g, &u);
         if (NotFound(u)) {
             u->p = v;
-            DVisit(g, u);
+            Visit(g, u);
         }
     }
     v->t_disc = ++g.time;

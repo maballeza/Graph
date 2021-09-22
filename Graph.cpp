@@ -15,21 +15,17 @@ HNode<V, I> TestVertex()
 }
 
 template <typename I>
-Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, std::string& output = {})
+Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& output = {})
 {
     Graph<I> g { vertices };
 
-    std::ostringstream oss{};
-    for (int v_n{}; v_n < vertices.size(); ++v_n) {
-        g.Breadth(v_n);
-        g.Summarize(oss);
-    }
+    g.Depth();
 
     if (std::ofstream ofs { output }) {
-        ofs << oss.str();
+        g.Summarize(ofs);
     }
     else {
-        std::cout << oss.str();
+        g.Summarize(std::cout);
     }
     return g;
 }
@@ -45,8 +41,5 @@ int main()
         { "f", "b", "e", "a" }
     };
 
-    std::string output {
-        "Doc\\Debug\\Output.txt"
-    };
-    auto g = DebugGraph<const char*>(undirected_input, output);
+    auto g = DebugGraph<const char*>(undirected_input);
 }
