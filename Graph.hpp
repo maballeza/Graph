@@ -104,6 +104,7 @@ void Graph<I>::Reset(Graph& g, Vertex* source)
         }
     }
     if (source) {
+        source->s = Vertex::Status::f;
         source->dist = 0;
         source->p = nullptr;
     }
@@ -118,7 +119,7 @@ bool Graph<I>::NotFound(const Vertex* v) {
 template <typename I>
 void Graph<I>::Breadth(int vertex)
 {
-    const size_t s = set.size();
+    const int s = set.size();
     if (0 <= vertex && vertex <= s - 1) {
         Graph::Breadth(*this, set[vertex]);
     }
@@ -149,13 +150,12 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
     Queue<V, I> Q;
     Q.Enqueue(source);
     while (Vertex* u = Q.Dequeue()) {
-        u->s = Vertex::Status::f;
         for (auto v : g.vertices[u]) {
             Normalize(g, &v);
             if (NotFound(v)) {
-                v->s = Vertex::Status::f;
                 v->p = u;
                 v->dist = u->dist + 1;
+                v->s = Vertex::Status::f;
                 Q.Enqueue(v);
             }
         }
