@@ -28,6 +28,10 @@ public:
     void Transpose();
 
     void Summarize(std::ostream& os);
+    std::vector<Vertex*>& VertexSet() { return set; }
+
+    int InDegree(Vertex* v) { return vertices[v].Size(); }
+    int OutDegree(Vertex* v) { return vertices[v].Size(); }
 
 private:
     Vertex* AcquireVertex(I&& list_head);

@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>  // Debug
 #include <fstream>  // Debug
+#include <assert.h>
 
 template <typename I>
 HNode<V, I> TestVertex()
@@ -18,15 +19,20 @@ template <typename I>
 Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& output = {})
 {
     Graph<I> g { vertices };
-
-    g.Depth();
-
-    if (std::ofstream ofs { output }) {
-        g.Summarize(ofs);
+    int s = vertices.size();
+    
+    g.Breadth(0);
+    for (auto& u : g.VertexSet()) {
+        if (u->item == "a") {
+            assert(g.InDegree(u) == 5);
+            assert(g.OutDegree(u) == 5);
+        }
+        else {
+            assert(g.InDegree(u) == 3);
+            assert(g.OutDegree(u) == 3);
+        }
     }
-    else {
-        g.Summarize(std::cout);
-    }
+
     return g;
 }
 
