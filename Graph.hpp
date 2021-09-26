@@ -28,14 +28,15 @@ public:
     void Transpose();
 
     void Summarize(std::ostream& os);
-    std::vector<Vertex*>& VertexSet() { return set; }
+    std::vector<Vertex*>& VertexSet() { return vertices.set; }
+    List<V, I>& Edges(Vertex* v) { return vertices[v]; }
 
     int InDegree(Vertex* v) { return vertices[v].Size(); }
     int OutDegree(Vertex* v) { return vertices[v].Size(); }
 
 private:
     Vertex* AcquireVertex(I&& list_head);
-    static void Normalize(const Graph& g, Vertex** list_v);
+    void Normalize(Vertex** list_v);
     static void Reset(Graph& g, Vertex* s = nullptr);
     static bool NotFound(const Vertex*);
 
@@ -46,25 +47,23 @@ private:
     static void Transpose(Graph& g);
 
     Vertices vertices;
-    std::vector<Vertex*> set;
     int time;
 };
 
 template <typename I>
 Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
-    : vertices{ lists.size() }, set{}, time{}
+    : vertices{ lists.size() }, time{}
 {
     for (std::vector<I>& list : lists) {
         auto head = list.begin();
         Vertex* v = AcquireVertex(std::forward<I>(*head));
         vertices.AttachVertex(v, {++head, list.end()});
-        set.push_back(v);
     }
 }
 
 template <typename I>
 Graph<I>::Graph(Graph&& g) noexcept 
-    : vertices{ std::move(g.vertices) }, set{ std::move(g.set) }, time{ g.time }
+    : vertices{ std::move(g.vertices) }, time{ g.time }
 {
     g.time = 0;
 }
@@ -72,7 +71,7 @@ Graph<I>::Graph(Graph&& g) noexcept
 template <typename I>
 Graph<I>::~Graph()
 {
-    for (Vertex* v : set) {
+    for (Vertex* v : vertices.set) {
         delete v;
         v = nullptr;
     }
@@ -85,20 +84,15 @@ Vertex<I>* Graph<I>::AcquireVertex(I&& list_head)
 }
 
 template <typename I>
-void Graph<I>::Normalize(const Graph& g, Vertex** list_v)
+void Graph<I>::Normalize(Vertex** list_v)
 {
-    for (auto& v : g.set) {
-        if (v->item == (*list_v)->item) {
-            *list_v = v;
-            return;
-        }
-    }
+    vertices.Normalize(list_v);
 }
 
 template <typename I>
 void Graph<I>::Reset(Graph& g, Vertex* source)
 {
-    for (Vertex* v : g.set) {
+    for (Vertex* v : g.vertices) {
         if (v != source) {
             v->dist = 100000;
             v->s = Vertex::Status::nf;
@@ -123,9 +117,9 @@ bool Graph<I>::NotFound(const Vertex* v) {
 template <typename I>
 void Graph<I>::Breadth(int vertex)
 {
-    const int s = set.size();
+    const int s = vertices.Size();
     if (0 <= vertex && vertex <= s - 1) {
-        Graph::Breadth(*this, set[vertex]);
+        Graph::Breadth(*this, vertices.set[vertex]);
     }
 }
 
@@ -138,7 +132,7 @@ void Graph<I>::Depth()
 template <typename I>
 void Graph<I>::ShortestPath()
 {
-    Graph::ShortestPath(set.front(), set.back());
+    Graph::ShortestPath(vertices.set.front(),vertices.set.back());
 }
 
 template <typename I>
@@ -155,7 +149,7 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
     Q.Enqueue(source);
     while (Vertex* u = Q.Dequeue()) {
         for (auto v : g.vertices[u]) {
-            Normalize(g, &v);
+            g.Normalize(&v);
             if (NotFound(v)) {
                 v->p = u;
                 v->dist = u->dist + 1;
@@ -171,7 +165,7 @@ template <typename I>
 void Graph<I>::Depth(Graph& g)
 {
     Graph::Reset(g);
-    for (Vertex* v : g.set) {
+    for (Vertex* v : g.vertices) {
         if (NotFound(v)) {
             Visit(g, v);
         }
@@ -184,7 +178,7 @@ void Graph<I>::Visit(Graph& g, Vertex* v)
     v->t_found = ++g.time;
     v->s = Vertex::Status::f;
     for (Vertex* u : g.vertices[v]) {
-        Normalize(g, &u);
+        g.Normalize(&u);
         if (NotFound(u)) {
             u->p = v;
             Visit(g, u);
@@ -205,5 +199,5 @@ void Graph<I>::Transpose(Graph& g)
 template <typename I>
 void Graph<I>::Summarize(std::ostream& os)
 {
-    Summary<I> { set, os }.Print();
+    Summary<I> { vertices.set, os }.Print();
 }

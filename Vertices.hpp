@@ -19,7 +19,7 @@ struct Vertex : BaseNode<I> {
     {
     }
     ~Vertex() = default;
-    
+
     Status s;
     int dist;     // Distance        -> Graph::Breadth()
     int t_found;  // Time found      -> Graph::Depth()
@@ -39,25 +39,31 @@ public:
     using Edges = std::unordered_map<Vertex*, List<V, I>>;
 
     Vertices(int t)
-        : total{ t + 1 }, count{}
+        : set{}, total{ t + 1 }, count{}
     { 
-        set[nullptr]; // Signals non-membership of a queried vertex.
+        edges[nullptr]; // Signals non-membership of a queried vertex.
     }
     Vertices(Vertices&& v) noexcept;
     List<V, I>& operator[](Vertex*);
+    auto begin() { return set.begin(); }
+    auto end() { return set.end(); }
 
-    List<V, I> AttachVertex(const std::vector<I>&);
+    int Size() { return set.size(); }
+    void Normalize(Vertex**);
     void AttachVertex(Vertex*, const std::vector<I>&);
+    List<V, I> AttachVertex(const std::vector<I>&);
+
+    std::vector<Vertex*> set;
 
 private:
-    Edges set;
-    int total;  // |set|
+    Edges edges;
+    int total;  // == |edges|
     int count;  // Running total.
 };
 
 template <typename I>
 Vertices<I>::Vertices(Vertices&& v) noexcept
-    : set{ std::move(v.set) }, total{ v.total }, count{ v.count }
+    : edges{ std::move(v.edges) }, set{ std::move(v.set) }, total{ v.total }, count{ v.count }
 {
     v.total = 0;
     v.count = 0;
@@ -67,23 +73,34 @@ template <typename I>
 List<V, I>& Vertices<I>::operator[](Vertex* v)
 {
     try {
-        return set.at(v);
+        return edges.at(v);
     }
     catch (std::out_of_range& /*re*/) {
         if (count < total) {
-            return set[v];
+            return edges[v];
         }
         else {
-            return set.at(nullptr);
+            return edges.at(nullptr);
         }
     };
 }
 
 template <typename I>
-List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& edges)
+void Vertices<I>::Normalize(Vertex** list_v)
+{
+    for (auto& v : set) {
+        if (v->item == (*list_v)->item) {
+            *list_v = v;
+            return;
+        }
+    }
+}
+
+template <typename I>
+List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
 {
     List<V, I> l;
-    for (I item : edges) {
+    for (I item : incident_vs) {
         l.Insert(std::forward<I>(item));
     }
     ++count;
@@ -91,9 +108,10 @@ List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& edges)
 }
 
 template <typename I>
-void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& edges)
+void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incident_vs)
 {
-    set[v] = AttachVertex(edges);
+    edges[v] = AttachVertex(incident_vs);
+    set.push_back(v);
 }
 
 template <typename I>
