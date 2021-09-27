@@ -49,6 +49,7 @@ public:
     auto end() { return set.end(); }
 
     int Size() { return set.size(); }
+    void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Normalize(Vertex**);
     void AttachVertex(Vertex*, const std::vector<I>&);
     List<V, I> AttachVertex(const std::vector<I>&);
@@ -83,6 +84,22 @@ List<V, I>& Vertices<I>::operator[](Vertex* v)
             return edges.at(nullptr);
         }
     };
+}
+
+template <typename I>
+void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
+{
+    if (v == s) {
+        path.push_back(s);
+    }
+    else if (v == nullptr) {
+        path.clear();
+        return;
+    }
+    else {
+        ShortestPath(s, v->p, path);
+        path.push_back(v);
+    }
 }
 
 template <typename I>
@@ -128,6 +145,7 @@ struct Summary {
 
     void Print() const { os << String(); }
     string String() const { return Header() + Body(); }
+    void ShortestPath(std::vector<Vertex*>&, std::ostream&);
 
 private:
     string SafeStringConversion(Vertex* v, char alternative = default_char) const;
@@ -206,4 +224,25 @@ std::string Summary<I>::Body() const
         oss << '\n';
     }
     return oss.str() + '\n';
+}
+
+template <typename I>
+void Summary<I>::ShortestPath(std::vector<Vertex*>& path, std::ostream& os)
+{
+    char beg = '<';
+    char end = '>';
+    char sep = ',';
+    char wsp = ' ';
+    if (path.empty()) {
+        os << std::string{ beg + wsp + end };
+    }
+    else {
+        std::ostringstream oss{};
+        oss << beg;
+        for (auto v : path) {
+            oss << wsp << SafeStringConversion(v)
+                << (v != path.back() ? sep : wsp);
+        }
+        os << oss.str() + end;
+    }
 }

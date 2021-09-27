@@ -24,8 +24,8 @@ public:
 
     void Breadth(int v);
     void Depth();
-    void ShortestPath();
     void Transpose();
+    std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v, std::ostream& os = {});
 
     void Summarize(std::ostream& os);
     std::vector<Vertex*>& VertexSet() { return vertices.set; }
@@ -43,7 +43,6 @@ private:
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
     static void Visit(Graph& g, Vertex* v);
-    static void ShortestPath(Vertex* s, Vertex* v);
     static void Transpose(Graph& g);
 
     Vertices vertices;
@@ -130,12 +129,6 @@ void Graph<I>::Depth()
 }
 
 template <typename I>
-void Graph<I>::ShortestPath()
-{
-    Graph::ShortestPath(vertices.set.front(),vertices.set.back());
-}
-
-template <typename I>
 void Graph<I>::Transpose()
 {
     Graph::Transpose(*this);
@@ -189,8 +182,15 @@ void Graph<I>::Visit(Graph& g, Vertex* v)
 }
 
 template <typename I>
-void Graph<I>::ShortestPath(Vertex* s, Vertex* v)
-{}
+std::vector<Vertex<I>*> Graph<I>::ShortestPath(Vertex* s, Vertex* v, std::ostream& os)
+{
+    std::vector<Vertex*> path;
+    vertices.ShortestPath(s, v, path);
+    if (os) {
+        Summary<I>{ vertices.set, os }.ShortestPath(path, os); // TODO
+    }
+    return path;
+}
 
 template <typename I>
 void Graph<I>::Transpose(Graph& g)

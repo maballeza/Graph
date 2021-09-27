@@ -22,17 +22,10 @@ Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& ou
     int s = vertices.size();
     
     g.Breadth(0);
-    for (auto& u : g.VertexSet()) {
-        if (u->item == "a") {
-            assert(g.InDegree(u) == 5);
-            assert(g.OutDegree(u) == 5);
-        }
-        else {
-            assert(g.InDegree(u) == 3);
-            assert(g.OutDegree(u) == 3);
-        }
+    if (std::ofstream os { output }) { 
+        auto v = g.VertexSet();
+        g.ShortestPath(v[0], v[3], os);
     }
-
     return g;
 }
 
@@ -47,5 +40,5 @@ int main()
         { "f", "b", "e", "a" }
     };
 
-    auto g = DebugGraph<const char*>(undirected_input);
+    auto g = DebugGraph<const char*>(undirected_input, "Doc/Debug/Output_SP.txt");
 }
