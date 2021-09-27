@@ -50,13 +50,13 @@ private:
 };
 
 template <typename I>
-Graph<I>::Graph(std::vector<std::vector<I>>& lists) noexcept
-    : vertices{ lists.size() }, time{}
+Graph<I>::Graph(std::vector<std::vector<I>>& incidentals) noexcept
+    : vertices{ incidentals.size() }, time{}
 {
-    for (std::vector<I>& list : lists) {
+    for (std::vector<I>& list : incidentals) {
         auto head = list.begin();
         Vertex* v = AcquireVertex(std::forward<I>(*head));
-        vertices.AttachVertex(v, {++head, list.end()});
+        vertices.AttachVertex(v, { ++head, list.end() });
     }
 }
 
@@ -199,5 +199,5 @@ void Graph<I>::Transpose(Graph& g)
 template <typename I>
 void Graph<I>::Summarize(std::ostream& os)
 {
-    Summary<I> { vertices.set, os }.Print();
+    Summary<I>{ vertices.set, os }.Print();
 }

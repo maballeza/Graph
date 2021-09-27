@@ -170,7 +170,7 @@ std::string Summary<I>::SafeStringConversion(Vertex* v, char alternative) const
     if constexpr (std::is_same_v<I, string> || std::is_convertible_v<I, string>) {
         return v->item;
     }
-    return string { alternative };
+    return string{ alternative };
 }
 
 template <typename I>
@@ -178,7 +178,7 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
 {
     const int size = header.size();
     if (!v) {
-        std::vector<string> empty(size, string { default_char });
+        std::vector<string> empty(size, string{ default_char });
         return empty;
     }
 
@@ -186,18 +186,18 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
     const auto distance        = std::to_string(v->dist);
     const auto time_found      = std::to_string(v->t_found);
     const auto time_discovered = std::to_string(v->t_disc);
-    const auto parent          = v->p ? SafeStringConversion(v->p) : string { default_char };
-    string status {};
+    const auto parent          = v->p ? SafeStringConversion(v->p) : string{ default_char };
+    string status{};
     switch (v->s) {
-    case Vertex::Status::nf : {
+    case Vertex::Status::nf: {
         status = "Not Found";
         break;
     }
-    case Vertex::Status::f : {
+    case Vertex::Status::f: {
         status = "Found";
         break;
     }
-    case Vertex::Status::d : {
+    case Vertex::Status::d: {
         status = "Discovered";
         break;
     }}
@@ -208,7 +208,7 @@ std::vector<std::string> Summary<I>::Summarize(Vertex* v) const
 template <typename I>
 std::string Summary<I>::Header() const
 {
-    std::ostringstream oss {};
+    std::ostringstream oss{};
     for (const auto& col_name : header) {
         oss << std::setw(col_width) << std::right << col_name;
     }
@@ -218,7 +218,7 @@ std::string Summary<I>::Header() const
 template <typename I>
 std::string Summary<I>::Body() const
 {
-    std::ostringstream oss {};
+    std::ostringstream oss{};
     for (const auto& n : vertices) {
         for (const auto& r : Summarize(n)) {
             oss << std::setw(col_width) << std::right << r;
