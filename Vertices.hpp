@@ -19,6 +19,8 @@ struct Vertex : BaseNode<I> {
     {
     }
     ~Vertex() = default;
+    bool IncidentTo(Vertex* v) { return this == v->p; }
+    bool IncidentFrom(Vertex* v) { return v == p; }
 
     Status s;
     int dist;     // Distance        -> Graph::Breadth()

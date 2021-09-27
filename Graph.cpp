@@ -19,13 +19,18 @@ template <typename I>
 Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& output = {})
 {
     Graph<I> g { vertices };
-    int s = vertices.size();
     
     g.Breadth(0);
-    if (std::ofstream os { output }) { 
-        auto v = g.VertexSet();
-        g.ShortestPath(v[0], v[3], os);
+    
+    auto vs = g.VertexSet();
+    auto u = vs[0]; // "a"
+    for (auto v : vs) {
+        if (v != u) {
+            assert(v->IncidentFrom(u));
+            assert(u->IncidentTo(v));
+        }
     }
+
     return g;
 }
 
