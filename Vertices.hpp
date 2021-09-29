@@ -55,6 +55,7 @@ public:
     void Normalize(Vertex**);
     void AttachVertex(Vertex*, const std::vector<I>&);
     List<V, I> AttachVertex(const std::vector<I>&);
+    void Transpose();
 
     std::vector<Vertex*> set;
 
@@ -131,6 +132,21 @@ void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incident_vs)
 {
     edges[v] = AttachVertex(incident_vs);
     set.push_back(v);
+}
+
+template <typename I>
+void Vertices<I>::Transpose()
+{
+    std::unordered_map<Vertex*, List<V, I>> edges_t;
+    edges_t[nullptr];
+    for (auto k : set) {
+        edges_t[k]; // Accounts for vertices with only incident edges (directed graphs) prior to a call to Transpose().
+        for (Vertex* v : edges[k]) {
+            Normalize(&v);
+            edges_t[v].Insert(I{ k->item });
+        }
+    }
+    edges = std::move(edges_t);
 }
 
 template <typename I>

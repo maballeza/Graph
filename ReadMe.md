@@ -5,6 +5,6 @@ A first implementation for an **directed** or **undirected graph** with methods 
 - General debugging.  
 - Implementations for methods  
   - [X] _ShortestPath(source_v, v)_  
-  - [ ] _Transpose(G)_  
+  - [X] _Transpose(G)_  
   - [ ] _StronglyConnectedComponents(G)_  
   - [ ] _AlternateShortestPath(source_v, v)_  

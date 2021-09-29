@@ -20,15 +20,15 @@ Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& ou
 {
     Graph<I> g { vertices };
     
-    g.Breadth(0);
-    
-    auto vs = g.VertexSet();
-    auto u = vs[0]; // "a"
-    for (auto v : vs) {
-        if (v != u) {
-            assert(v->IncidentFrom(u));
-            assert(u->IncidentTo(v));
-        }
+    if (std::ofstream ofs{ output, std::ios::app }) {
+        // Comparison of g before and after a call to Transpose()
+        g.Breadth(1);
+        g.Summarize(ofs);
+        
+        g.Transpose();
+        
+        g.Breadth(1);
+        g.Summarize(ofs);
     }
 
     return g;
@@ -36,14 +36,14 @@ Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& ou
 
 int main()
 {
-    std::vector<std::vector<const char*>> undirected_input {
+    std::vector<std::vector<const char*>> directed_input {
         { "a", "b", "c", "d", "e", "f" },
-        { "b", "c", "f", "a" },
-        { "c", "d", "b", "a" },
-        { "d", "e", "c", "a" },
-        { "e", "f", "d", "a" },
-        { "f", "b", "e", "a" }
+        { "b", "c", "f" },
+        { "c", "b", "d" },
+        { "d" },
+        { "e", "d", "f" },
+        { "f", "b", "e" }
     };
 
-    auto g = DebugGraph<const char*>(undirected_input, "Doc/Debug/Output_SP.txt");
+    auto g = DebugGraph<const char*>(directed_input, "Doc/Debug/Output_T.txt");
 }

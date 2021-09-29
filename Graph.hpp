@@ -43,7 +43,6 @@ private:
     static void Breadth(Graph& g, Vertex* s);
     static void Depth(Graph& g);
     static void Visit(Graph& g, Vertex* v);
-    static void Transpose(Graph& g);
 
     Vertices vertices;
     int time;
@@ -131,7 +130,7 @@ void Graph<I>::Depth()
 template <typename I>
 void Graph<I>::Transpose()
 {
-    Graph::Transpose(*this);
+    vertices.Transpose();
 }
 
 template <typename I>
@@ -191,10 +190,6 @@ std::vector<Vertex<I>*> Graph<I>::ShortestPath(Vertex* s, Vertex* v, std::ostrea
     }
     return path;
 }
-
-template <typename I>
-void Graph<I>::Transpose(Graph& g)
-{}
 
 template <typename I>
 void Graph<I>::Summarize(std::ostream& os)
