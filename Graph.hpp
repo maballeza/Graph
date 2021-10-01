@@ -18,14 +18,14 @@ public:
     * @param lists
     *   A set of lists, each containing a set of vertices signaling the direct descendancy of each one to the first.
     */
-    Graph(std::vector<std::vector<I>>& lists) noexcept;
+    Graph(const std::vector<std::vector<I>>& lists) noexcept;
     Graph(Graph&&) noexcept;
     ~Graph();
 
     void Breadth(int v);
     void Depth();
     void Transpose();
-    std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v, std::ostream& os = {});
+    std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
 
     void Summarize(std::ostream& os);
     std::vector<Vertex*>& VertexSet() { return vertices.set; }
@@ -49,12 +49,12 @@ private:
 };
 
 template <typename I>
-Graph<I>::Graph(std::vector<std::vector<I>>& incidentals) noexcept
+Graph<I>::Graph(const std::vector<std::vector<I>>& incidentals) noexcept
     : vertices{ incidentals.size() }, time{}
 {
-    for (std::vector<I>& list : incidentals) {
+    for (const std::vector<I>& list : incidentals) {
         auto head = list.begin();
-        Vertex* v = AcquireVertex(std::forward<I>(*head));
+        Vertex* v = AcquireVertex(std::forward<I>(I{ *head }));
         vertices.AttachVertex(v, { ++head, list.end() });
     }
 }
@@ -181,13 +181,10 @@ void Graph<I>::Visit(Graph& g, Vertex* v)
 }
 
 template <typename I>
-std::vector<Vertex<I>*> Graph<I>::ShortestPath(Vertex* s, Vertex* v, std::ostream& os)
+std::vector<Vertex<I>*> Graph<I>::ShortestPath(Vertex* s, Vertex* v)
 {
     std::vector<Vertex*> path;
     vertices.ShortestPath(s, v, path);
-    if (os) {
-        Summary<I>{ vertices.set, os }.ShortestPath(path, os); // TODO
-    }
     return path;
 }
 
