@@ -10,10 +10,10 @@ class List {
 public:
     using Node = N<I>;
     using Handle = HNode<N, I>;
-
+    
     struct Iterator {
         explicit Iterator(Node* n) : np{ n } {}
-        Node* operator*() { return np; }    // Returns a Node* (dereferencing is required for range-for loops).
+        Node* operator*() { return np; }
         Iterator& operator++() { np = np->next; return *this; }
         bool operator!=(const Iterator& ni) { return np != ni.np; }
     private:
@@ -21,11 +21,12 @@ public:
     };
 
     List() : head{}, tail{}, size{} {}
+    List(const List& l);
     List(List&& l) noexcept;
     ~List();
 
     List& operator=(List&& l) noexcept;
-
+    bool operator==(List& l) { return head == l.head; }
     Node* operator[](int i) {
         return Search(I{ i });
     }
@@ -40,8 +41,8 @@ public:
     */
     Node* Insert(I&& i);
     Node* Insert(Node* n);  // Acquire<N, I>::Instance() should be used to create a Node*.
-    void Delete(Node** n);
     Handle Release(I&& i);
+    void Delete(Node** n);
 
     Node* Search(const I& i);
     int Size() const { return size; }
@@ -51,6 +52,14 @@ private:
     Node* tail;
     int size;
 };
+
+template <template <typename> class N, typename I>
+List<N, I>::List(const List& l) : head{}, tail{}, size{} {
+    for (Node* n = l.head; n; n = n->next) {
+        Insert(I{ n->item });
+    }
+    size = l.size;
+}
 
 template <template <typename> class N, typename I>
 List<N, I>::List(List&& l) noexcept : head{}, tail{}, size{} {
