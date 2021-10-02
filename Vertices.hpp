@@ -19,6 +19,7 @@ struct Vertex : BaseNode<I> {
     {
     }
     ~Vertex() = default;
+    bool operator==(const Vertex& v) const { return this->item == v.item; }
     bool IncidentTo(Vertex* v) { return this == v->p; }
     bool IncidentFrom(Vertex* v) { return v == p; }
 
@@ -51,6 +52,7 @@ public:
     auto end() { return set.end(); }
 
     int Size() { return set.size(); }
+    bool InGraph(Vertex*);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Normalize(Vertex**);
     void AttachVertex(Vertex*, const std::vector<I>&);
@@ -90,6 +92,18 @@ List<V, I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
+bool Vertices<I>::InGraph(Vertex* w)
+{
+    Normalize(&w);
+    for (auto v : set) {
+        if (v == w) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template <typename I>
 void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
 {
     if (v == s) {
@@ -101,7 +115,9 @@ void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
     }
     else {
         ShortestPath(s, v->p, path);
-        path.push_back(v);
+        if (!path.empty()) {
+            path.push_back(v);
+        }
     }
 }
 

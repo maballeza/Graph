@@ -1,4 +1,5 @@
 #include "GraphTest.hpp"
+#include <string>
 
 TEST_F(GraphTest, SetSize)
 {
@@ -127,3 +128,85 @@ TEST_F(GraphTest, OutDegreeDirected)
         }
     }
 }
+
+TEST_F(GraphTest, ShortestPathUndirected)
+{
+    Graph<const char*>& g = this->undirected;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    Vertex<const char*> v_a { std::move("a") };
+    Vertex<const char*> v_b { std::move("b") };
+    Vertex<const char*> v_c { std::move("c") };
+    
+    for (Vertex<const char*>* v : vs) {
+        g.Breadth(v);
+        if (v == a) {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+        }
+        else if (v == b) {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+        }
+        else {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre(Pointee(v_c), Pointee(v_b), Pointee(v_a)));
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre(Pointee(v_c), Pointee(v_b)));
+        }
+    }
+}
+
+TEST_F(GraphTest, ShortestPathDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    Vertex<const char*> v_a { std::move("a") };
+    Vertex<const char*> v_b { std::move("b") };
+    Vertex<const char*> v_c { std::move("c") };
+
+    for (Vertex<const char*>* v : vs) {
+        g.Breadth(v);
+        if (v == a) {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+        }
+        else if (v == b) {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+        }
+        else {
+            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+        }
+    }
+}
+
+TEST_F(GraphTest, Transpose) {}

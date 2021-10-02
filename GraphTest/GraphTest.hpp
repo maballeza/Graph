@@ -1,24 +1,22 @@
 #pragma once
 #include "gtest/gtest.h"
-#include "gtest/gtest-matchers.h"
 #include "gmock/gmock-matchers.h"
-#include "gmock/gmock-more-matchers.h"
 #include "../Graph.hpp"
 
 using ::testing::ElementsAre;
-using ::testing::ContainerEq;
-using ::testing::IsEmpty;
+using ::testing::Pointee;
 
 class GraphTest : public ::testing::Test {
 protected:
 
     void SetUp() override
     {
-        undirected.Breadth(0);      // Index
-        directed.Breadth(0);
+        auto vs = directed.VertexSet();
+        undirected.Breadth(vs[0]);      // Index
+        directed.Breadth(vs[0]);
     }
 
-    Graph<const char*> undirected{{ // a - b - c
+    Graph<const char*> undirected {{ // a - b - c
         { "a", "b" },
         { "b", "a", "c" },
         { "c", "b" }
