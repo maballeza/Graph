@@ -22,12 +22,13 @@ Graph<I> DebugGraph(std::vector<std::vector<I>>& vertices, const std::string& ou
     
     if (std::ofstream ofs{ output, std::ios::app }) {
         // Comparison of g before and after a call to Transpose()
-        g.Breadth(1);
+        auto vs = g.VertexSet();
+        g.Breadth(vs[1]);
         g.Summarize(ofs);
         
         g.Transpose();
         
-        g.Breadth(1);
+        g.Breadth(vs[1]);
         g.Summarize(ofs);
     }
 

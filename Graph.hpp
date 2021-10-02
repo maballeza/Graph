@@ -22,7 +22,7 @@ public:
     Graph(Graph&&) noexcept;
     ~Graph();
 
-    void Breadth(int v);
+    void Breadth(Vertex*);
     void Depth();
     void Transpose();
     std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
@@ -34,9 +34,10 @@ public:
     int InDegree(Vertex* v);
     int OutDegree(Vertex* v) { return vertices[v].Size(); }
 
+    void Normalize(Vertex** list_v);
 private:
     Vertex* AcquireVertex(I&& list_head);
-    void Normalize(Vertex** list_v);
+    bool InGraph(Vertex*);
     static void Reset(Graph& g, Vertex* s = nullptr);
     static bool NotFound(const Vertex*);
 
@@ -82,6 +83,12 @@ Vertex<I>* Graph<I>::AcquireVertex(I&& list_head)
 }
 
 template <typename I>
+bool Graph<I>::InGraph(Vertex* w)
+{
+    return vertices.InGraph(w);
+}
+
+template <typename I>
 void Graph<I>::Normalize(Vertex** list_v)
 {
     vertices.Normalize(list_v);
@@ -113,11 +120,11 @@ bool Graph<I>::NotFound(const Vertex* v) {
 }
 
 template <typename I>
-void Graph<I>::Breadth(int vertex)
+void Graph<I>::Breadth(Vertex* v)
 {
-    const int s = vertices.Size();
-    if (0 <= vertex && vertex <= s - 1) {
-        Graph::Breadth(*this, vertices.set[vertex]);
+    if(InGraph(v)) {
+        Normalize(&v);
+        Graph::Breadth(*this, v);
     }
 }
 
