@@ -31,7 +31,7 @@ public:
     std::vector<Vertex*>& VertexSet() { return vertices.set; }
     List<V, I>& Edges(Vertex* v) { return vertices[v]; }
 
-    int InDegree(Vertex* v) { return vertices[v].Size(); }
+    int InDegree(Vertex* v);
     int OutDegree(Vertex* v) { return vertices[v].Size(); }
 
 private:
@@ -192,4 +192,18 @@ template <typename I>
 void Graph<I>::Summarize(std::ostream& os)
 {
     Summary<I>{ vertices.set, os }.Print();
+}
+
+template <typename I>
+int Graph<I>::InDegree(Vertex* v)
+{
+    int degree{};
+    for (auto u : vertices.set) {
+        for (auto incidental : vertices[u]) {
+            if (incidental->item == v->item) {
+                ++degree;
+            }
+        }
+    }
+    return degree;
 }

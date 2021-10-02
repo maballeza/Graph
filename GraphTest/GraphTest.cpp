@@ -83,6 +83,21 @@ TEST_F(GraphTest, InDegreeUndirected)
     }
 }
 
+TEST_F(GraphTest, InDegreeDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto set = g.VertexSet();
+    
+    for (Vertex<const char*>* v : set) {
+        if (v->item != "a") {
+            ASSERT_EQ(g.InDegree(v), 1);
+        }
+        else {
+            ASSERT_EQ(g.InDegree(v), 0);
+        }
+    }
+}
+
 TEST_F(GraphTest, OutDegreeUndirected)
 {
     Graph<const char*>& g = this->undirected;
@@ -94,6 +109,21 @@ TEST_F(GraphTest, OutDegreeUndirected)
         }
         else {
             ASSERT_EQ(g.OutDegree(v), 2);
+        }
+    }
+}
+
+TEST_F(GraphTest, OutDegreeDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto set = g.VertexSet();
+
+    for (Vertex<const char*>* v : set) {
+        if (v->item != "c") {
+            ASSERT_EQ(g.OutDegree(v), 1);
+        }
+        else {
+            ASSERT_EQ(g.OutDegree(v), 0);
         }
     }
 }
