@@ -9,12 +9,12 @@ TEST_F(GraphTest, SetSize)
 
 TEST_F(GraphTest, SetOrder)
 {
-    std::vector<const char*> v { "a", "b", "c" };
+    std::vector<const char*> v_comp { "a", "b", "c" };
+    std::vector<Vertex<const char*>*>& v = this->directed.VertexSet();
 
-    for (int i{}; i < v.size(); ++i) {
-        ASSERT_EQ(this->undirected.VertexSet()[i]->item, v[i]);
-        ASSERT_EQ(this->directed.VertexSet()[i]->item, v[i]);
-    }
+    ASSERT_EQ(v[0]->item, v_comp[0]);
+    ASSERT_EQ(v[1]->item, v_comp[1]);
+    ASSERT_EQ(v[2]->item, v_comp[2]);
 }
 
 TEST_F(GraphTest, MatchingEdgesUndirected)
@@ -25,20 +25,20 @@ TEST_F(GraphTest, MatchingEdgesUndirected)
         auto edges = g.Edges(v);
 
         if (v->item == "a") {
-            ASSERT_EQ(edges.Search("a"), nullptr);
-            ASSERT_NE(edges.Search("b"), nullptr);
-            ASSERT_EQ(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), NotNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
         }
         else if (v->item == "b") {
-            ASSERT_NE(edges.Search("a"), nullptr);
-            ASSERT_EQ(edges.Search("b"), nullptr);
-            ASSERT_NE(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), NotNull());
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), NotNull());
 
         }
         else {
-            ASSERT_EQ(edges.Search("a"), nullptr);
-            ASSERT_NE(edges.Search("b"), nullptr);
-            ASSERT_EQ(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), NotNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
         }
     }
 }
@@ -51,20 +51,20 @@ TEST_F(GraphTest, MatchingEdgesDirected)
         auto edges = g.Edges(v);
 
         if (v->item == "a") {
-            ASSERT_EQ(edges.Search("a"), nullptr);
-            ASSERT_NE(edges.Search("b"), nullptr);
-            ASSERT_EQ(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), NotNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
         }
         else if (v->item == "b") {
-            ASSERT_EQ(edges.Search("a"), nullptr);
-            ASSERT_EQ(edges.Search("b"), nullptr);
-            ASSERT_NE(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), NotNull());
 
         }
         else {
-            ASSERT_EQ(edges.Search("a"), nullptr);
-            ASSERT_EQ(edges.Search("b"), nullptr);
-            ASSERT_EQ(edges.Search("c"), nullptr);
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
         }
     }
 }
