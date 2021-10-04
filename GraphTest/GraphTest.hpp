@@ -3,6 +3,8 @@
 #include "gmock/gmock-matchers.h"
 #include "../Graph.hpp"
 
+using ::testing::IsNull;
+using ::testing::NotNull;
 using ::testing::ElementsAre;
 using ::testing::Pointee;
 

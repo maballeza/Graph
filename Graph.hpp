@@ -22,19 +22,20 @@ public:
     Graph(Graph&&) noexcept;
     ~Graph();
 
+    void Normalize(Vertex** list_v);
+
     void Breadth(Vertex*);
     void Depth();
-    void Transpose();
     std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
+    void Transpose();
 
     void Summarize(std::ostream& os);
-    std::vector<Vertex*>& VertexSet() { return vertices.set; }
-    List<V, I>& Edges(Vertex* v) { return vertices[v]; }
 
     int InDegree(Vertex* v);
     int OutDegree(Vertex* v) { return vertices[v].Size(); }
+    std::vector<Vertex*>& VertexSet() { return vertices.set; }
+    List<V, I>& Edges(Vertex* v) { return vertices[v]; }
 
-    void Normalize(Vertex** list_v);
 private:
     Vertex* AcquireVertex(I&& list_head);
     bool InGraph(Vertex*);

@@ -51,17 +51,18 @@ public:
     auto begin() { return set.begin(); }
     auto end() { return set.end(); }
 
-    int Size() { return set.size(); }
-    bool InGraph(Vertex*);
-    void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
-    void Normalize(Vertex**);
     void AttachVertex(Vertex*, const std::vector<I>&);
-    List<V, I> AttachVertex(const std::vector<I>&);
+    void Normalize(Vertex**);
+    void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Transpose();
+    bool InGraph(Vertex*);
+    int Size() { return set.size(); }
 
     std::vector<Vertex*> set;
 
 private:
+    List<V, I> AttachVertex(const std::vector<I>&);
+
     Edges edges;
     int total;  // == |edges|
     int count;  // Running total.
