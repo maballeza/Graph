@@ -7,6 +7,7 @@ using ::testing::IsNull;
 using ::testing::NotNull;
 using ::testing::ElementsAre;
 using ::testing::Pointee;
+using ::testing::Eq;
 
 class GraphTest : public ::testing::Test {
 protected:

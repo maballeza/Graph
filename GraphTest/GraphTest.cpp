@@ -129,6 +129,103 @@ TEST_F(GraphTest, OutDegreeDirected)
     }
 }
 
+TEST_F(GraphTest, BreadthUndirected)
+{
+    Graph<const char*>& g = this->undirected;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    
+    auto discovered = Vertex<const char*>::Status::d;
+    
+    for (Vertex<const char*>* v : vs) {
+        g.Breadth(v);
+        if (v == a) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 0);
+            ASSERT_EQ(b->dist, 1);
+            ASSERT_EQ(c->dist, 2);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, Eq(a));
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else if (v == b) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 1);
+            ASSERT_EQ(b->dist, 0);
+            ASSERT_EQ(c->dist, 1);
+            ASSERT_THAT(a->p, Eq(b));
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 2);
+            ASSERT_EQ(b->dist, 1);
+            ASSERT_EQ(c->dist, 0);
+            ASSERT_THAT(a->p, Eq(b));
+            ASSERT_THAT(b->p, Eq(c));
+            ASSERT_THAT(c->p, IsNull());
+        }
+    }
+}
+
+TEST_F(GraphTest, BreadthDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    
+    auto discovered = Vertex<const char*>::Status::d;
+    auto not_found = Vertex<const char*>::Status::nf;
+    
+    for (Vertex<const char*>* v : vs) {
+        g.Breadth(v);
+        if (v == a) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 0);
+            ASSERT_EQ(b->dist, 1);
+            ASSERT_EQ(c->dist, 2);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, Eq(a));
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else if (v == b) {
+            ASSERT_EQ(a->s, not_found);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 100000);
+            ASSERT_EQ(b->dist, 0);
+            ASSERT_EQ(c->dist, 1);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else {
+            ASSERT_EQ(a->s, not_found);
+            ASSERT_EQ(b->s, not_found);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->dist, 100000);
+            ASSERT_EQ(b->dist, 100000);
+            ASSERT_EQ(c->dist, 0);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, IsNull());
+        }
+    }
+}
+
 TEST_F(GraphTest, ShortestPathUndirected)
 {
     Graph<const char*>& g = this->undirected;
