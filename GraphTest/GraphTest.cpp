@@ -226,6 +226,58 @@ TEST_F(GraphTest, BreadthDirected)
     }
 }
 
+TEST_F(GraphTest, DepthUndirected)
+{
+    Graph<const char*>& g = this->undirected;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    auto discovered = Vertex<const char*>::Status::d;
+    auto not_found = Vertex<const char*>::Status::nf;
+
+    g.Depth();
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 1);
+    ASSERT_EQ(b->t_found, 2);
+    ASSERT_EQ(c->t_found, 3);
+    ASSERT_EQ(a->t_disc, 6);
+    ASSERT_EQ(b->t_disc, 5);
+    ASSERT_EQ(c->t_disc, 4);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+}
+
+TEST_F(GraphTest, DepthDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    auto discovered = Vertex<const char*>::Status::d;
+    auto not_found = Vertex<const char*>::Status::nf;
+
+    g.Depth();
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 1);
+    ASSERT_EQ(b->t_found, 2);
+    ASSERT_EQ(c->t_found, 3);
+    ASSERT_EQ(a->t_disc, 6);
+    ASSERT_EQ(b->t_disc, 5);
+    ASSERT_EQ(c->t_disc, 4);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+}
+
 TEST_F(GraphTest, ShortestPathUndirected)
 {
     Graph<const char*>& g = this->undirected;
