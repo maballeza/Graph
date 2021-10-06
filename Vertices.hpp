@@ -1,5 +1,5 @@
 #pragma once
-#include "List.hpp"
+#include "GraphList.hpp"
 #include "Node.hpp"
 #include <unordered_map>
 #include <vector>
@@ -38,8 +38,9 @@ using V = Vertex<T>;
 template <typename I>
 class Vertices {
 public:
+    using List = GraphList<V, I>;
     using Vertex = Vertex<I>;
-    using Edges = std::unordered_map<Vertex*, List<V, I>>;
+    using Edges = std::unordered_map<Vertex*, List>;
 
     Vertices(int t)
         : set{}, total{ t + 1 }, count{}
@@ -47,7 +48,7 @@ public:
         edges[nullptr]; // Signals non-membership of a queried vertex.
     }
     Vertices(Vertices&& v) noexcept;
-    List<V, I>& operator[](Vertex*);
+    List& operator[](Vertex*);
     auto begin() { return set.begin(); }
     auto end() { return set.end(); }
 
@@ -61,7 +62,7 @@ public:
     std::vector<Vertex*> set;
 
 private:
-    List<V, I> AttachVertex(const std::vector<I>&);
+    List AttachVertex(const std::vector<I>&);
 
     Edges edges;
     int total;  // == |edges|
@@ -77,7 +78,7 @@ Vertices<I>::Vertices(Vertices&& v) noexcept
 }
 
 template <typename I>
-List<V, I>& Vertices<I>::operator[](Vertex* v)
+GraphList<V,I>& Vertices<I>::operator[](Vertex* v)
 {
     try {
         return edges.at(v);
@@ -134,9 +135,9 @@ void Vertices<I>::Normalize(Vertex** list_v)
 }
 
 template <typename I>
-List<V, I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
+GraphList<V,I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
 {
-    List<V, I> l;
+    List l;
     for (I item : incident_vs) {
         l.Insert(std::forward<I>(item));
     }
@@ -154,7 +155,7 @@ void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incident_vs)
 template <typename I>
 void Vertices<I>::Transpose()
 {
-    std::unordered_map<Vertex*, List<V, I>> edges_t;
+    std::unordered_map<Vertex*, List> edges_t;
     edges_t[nullptr];
     for (auto k : set) {
         edges_t[k]; // Accounts for vertices with only incident edges (directed graphs) prior to a call to Transpose().
