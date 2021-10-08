@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="Doc\Test\Input.hpp" />
     <ClInclude Include="Graph.hpp" />
+    <ClInclude Include="GraphList.hpp" />
     <ClInclude Include="Vertices.hpp" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Node.hpp" />

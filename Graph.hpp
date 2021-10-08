@@ -1,6 +1,6 @@
 #pragma once
 #include "Vertices.hpp"
-#include "List.hpp"
+#include "GraphList.hpp"
 #include "Queue.hpp"
 #include <vector>
 #include <iostream> // Debug
@@ -22,8 +22,6 @@ public:
     Graph(Graph&&) noexcept;
     ~Graph();
 
-    void Normalize(Vertex** list_v);
-
     void Breadth(Vertex*);
     void Depth();
     std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
@@ -34,7 +32,7 @@ public:
     int InDegree(Vertex* v);
     int OutDegree(Vertex* v) { return vertices[v].Size(); }
     std::vector<Vertex*>& VertexSet() { return vertices.set; }
-    List<V, I>& Edges(Vertex* v) { return vertices[v]; }
+    GraphList<I>& Edges(Vertex* v) { return vertices[v]; }
 
 private:
     Vertex* AcquireVertex(I&& list_head);
@@ -90,12 +88,6 @@ bool Graph<I>::InGraph(Vertex* w)
 }
 
 template <typename I>
-void Graph<I>::Normalize(Vertex** list_v)
-{
-    vertices.Normalize(list_v);
-}
-
-template <typename I>
 void Graph<I>::Reset(Graph& g, Vertex* source)
 {
     for (Vertex* v : g.vertices) {
@@ -124,7 +116,6 @@ template <typename I>
 void Graph<I>::Breadth(Vertex* v)
 {
     if(InGraph(v)) {
-        Normalize(&v);
         Graph::Breadth(*this, v);
     }
 }
@@ -149,7 +140,6 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
     Q.Enqueue(source);
     while (Vertex* u = Q.Dequeue()) {
         for (auto v : g.vertices[u]) {
-            g.Normalize(&v);
             if (NotFound(v)) {
                 v->p = u;
                 v->dist = u->dist + 1;
@@ -178,7 +168,6 @@ void Graph<I>::Visit(Graph& g, Vertex* v)
     v->t_found = ++g.time;
     v->s = Vertex::Status::f;
     for (Vertex* u : g.vertices[v]) {
-        g.Normalize(&u);
         if (NotFound(u)) {
             u->p = v;
             Visit(g, u);

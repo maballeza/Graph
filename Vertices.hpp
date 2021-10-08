@@ -1,5 +1,4 @@
 #pragma once
-#include "GraphList.hpp"
 #include "Node.hpp"
 #include <unordered_map>
 #include <vector>
@@ -36,16 +35,20 @@ template <typename T>
 using V = Vertex<T>;
 
 template <typename I>
+class GraphList;
+
+template <typename I>
 class Vertices {
 public:
-    using List = GraphList<V, I>;
+    using List = GraphList<I>;
     using Vertex = Vertex<I>;
     using Edges = std::unordered_map<Vertex*, List>;
 
     Vertices(int t)
         : set{}, total{ t + 1 }, count{}
-    { 
+    {
         edges[nullptr]; // Signals non-membership of a queried vertex.
+        List::set = &set;
     }
     Vertices(Vertices&& v) noexcept;
     List& operator[](Vertex*);
@@ -53,7 +56,6 @@ public:
     auto end() { return set.end(); }
 
     void AttachVertex(Vertex*, const std::vector<I>&);
-    void Normalize(Vertex**);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Transpose();
     bool InGraph(Vertex*);
@@ -73,12 +75,13 @@ template <typename I>
 Vertices<I>::Vertices(Vertices&& v) noexcept
     : edges{ std::move(v.edges) }, set{ std::move(v.set) }, total{ v.total }, count{ v.count }
 {
+    List::set = &v.set;
     v.total = 0;
     v.count = 0;
 }
 
 template <typename I>
-GraphList<V,I>& Vertices<I>::operator[](Vertex* v)
+GraphList<I>& Vertices<I>::operator[](Vertex* v)
 {
     try {
         return edges.at(v);
@@ -96,7 +99,6 @@ GraphList<V,I>& Vertices<I>::operator[](Vertex* v)
 template <typename I>
 bool Vertices<I>::InGraph(Vertex* w)
 {
-    Normalize(&w);
     for (auto v : set) {
         if (v == w) {
             return true;
@@ -124,18 +126,7 @@ void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
 }
 
 template <typename I>
-void Vertices<I>::Normalize(Vertex** list_v)
-{
-    for (auto& v : set) {
-        if (v->item == (*list_v)->item) {
-            *list_v = v;
-            return;
-        }
-    }
-}
-
-template <typename I>
-GraphList<V,I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
+GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
 {
     List l;
     for (I item : incident_vs) {
@@ -160,7 +151,6 @@ void Vertices<I>::Transpose()
     for (auto k : set) {
         edges_t[k]; // Accounts for vertices with only incident edges (directed graphs) prior to a call to Transpose().
         for (Vertex* v : edges[k]) {
-            Normalize(&v);
             edges_t[v].Insert(I{ k->item });
         }
     }

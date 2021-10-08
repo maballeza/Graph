@@ -39,6 +39,9 @@
     <ClInclude Include="Doc\Test\Input.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graph.cpp">
