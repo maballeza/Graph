@@ -48,7 +48,6 @@ public:
         : set{}, total{ t + 1 }, count{}
     {
         edges[nullptr]; // Signals non-membership of a queried vertex.
-        List::set = &set;
     }
     Vertices(Vertices&& v) noexcept;
     List& operator[](Vertex*);
@@ -75,7 +74,6 @@ template <typename I>
 Vertices<I>::Vertices(Vertices&& v) noexcept
     : edges{ std::move(v.edges) }, set{ std::move(v.set) }, total{ v.total }, count{ v.count }
 {
-    List::set = &v.set;
     v.total = 0;
     v.count = 0;
 }
@@ -140,6 +138,7 @@ template <typename I>
 void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incident_vs)
 {
     edges[v] = AttachVertex(incident_vs);
+    edges[v].set = &set;
     set.push_back(v);
 }
 
@@ -148,8 +147,8 @@ void Vertices<I>::Transpose()
 {
     std::unordered_map<Vertex*, List> edges_t;
     edges_t[nullptr];
-    for (auto k : set) {
-        edges_t[k]; // Accounts for vertices with only incident edges (directed graphs) prior to a call to Transpose().
+    for (auto k : set) {        // Accounts for vertices with only incident edges (directed graphs)
+        edges_t[k].set = &set; //<-and initializes all 'set' pointers.
         for (Vertex* v : edges[k]) {
             edges_t[v].Insert(I{ k->item });
         }
