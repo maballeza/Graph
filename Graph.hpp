@@ -23,7 +23,7 @@ public:
     ~Graph();
 
     void Breadth(Vertex*);
-    void Depth();
+    void Depth(Vertex*);
     std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
     void Transpose();
 
@@ -41,7 +41,7 @@ private:
     static bool NotFound(const Vertex*);
 
     static void Breadth(Graph& g, Vertex* s);
-    static void Depth(Graph& g);
+    static void Depth(Graph& g, Vertex* s);
     static void Visit(Graph& g, Vertex* v);
 
     Vertices vertices;
@@ -121,9 +121,11 @@ void Graph<I>::Breadth(Vertex* v)
 }
 
 template <typename I>
-void Graph<I>::Depth()
+void Graph<I>::Depth(Vertex* v)
 {
-    Graph::Depth(*this);
+    if (InGraph(v)) {
+        Graph::Depth(*this, v);
+    }
 }
 
 template <typename I>
@@ -152,11 +154,19 @@ void Graph<I>::Breadth(Graph& g, Vertex* source)
 }
 
 template <typename I>
-void Graph<I>::Depth(Graph& g)
+void Graph<I>::Depth(Graph& g, Vertex* source)
 {
     Graph::Reset(g);
-    for (Vertex* v : g.vertices) {
-        if (NotFound(v)) {
+    bool source_found{};
+    auto stand_in = g.VertexSet();
+    stand_in.reserve(stand_in.size() * 2);
+    for (Vertex* v : stand_in) {
+        if (!source_found && v != source) {
+            stand_in.push_back(v);
+            continue;
+        }
+        else if (NotFound(v)) {
+            source_found = true;
             Visit(g, v);
         }
     }

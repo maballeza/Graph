@@ -236,20 +236,52 @@ TEST_F(GraphTest, DepthUndirected)
 
     auto discovered = Vertex<const char*>::Status::d;
     auto not_found = Vertex<const char*>::Status::nf;
-
-    g.Depth();
-    ASSERT_EQ(a->s, discovered);
-    ASSERT_EQ(b->s, discovered);
-    ASSERT_EQ(c->s, discovered);
-    ASSERT_EQ(a->t_found, 1);
-    ASSERT_EQ(b->t_found, 2);
-    ASSERT_EQ(c->t_found, 3);
-    ASSERT_EQ(a->t_disc, 6);
-    ASSERT_EQ(b->t_disc, 5);
-    ASSERT_EQ(c->t_disc, 4);
-    ASSERT_THAT(a->p, IsNull());
-    ASSERT_THAT(b->p, Eq(a));
-    ASSERT_THAT(c->p, Eq(b));
+    
+    for (Vertex<const char*>* v : vs) {
+        g.Depth(v);
+        if (v == a) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 1);
+            ASSERT_EQ(b->t_found, 2);
+            ASSERT_EQ(c->t_found, 3);
+            ASSERT_EQ(a->t_disc, 6);
+            ASSERT_EQ(b->t_disc, 5);
+            ASSERT_EQ(c->t_disc, 4);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, Eq(a));
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else if (v == b) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 4);
+            ASSERT_EQ(b->t_found, 1);
+            ASSERT_EQ(c->t_found, 2);
+            ASSERT_EQ(a->t_disc, 5);
+            ASSERT_EQ(b->t_disc, 6);
+            ASSERT_EQ(c->t_disc, 3);
+            ASSERT_THAT(a->p, Eq(b));
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 3);
+            ASSERT_EQ(b->t_found, 2);
+            ASSERT_EQ(c->t_found, 1);
+            ASSERT_EQ(a->t_disc, 4);
+            ASSERT_EQ(b->t_disc, 5);
+            ASSERT_EQ(c->t_disc, 6);
+            ASSERT_THAT(a->p, Eq(b));
+            ASSERT_THAT(b->p, Eq(c));
+            ASSERT_THAT(c->p, IsNull());
+        }
+    }
 }
 
 TEST_F(GraphTest, DepthDirected)
@@ -262,20 +294,52 @@ TEST_F(GraphTest, DepthDirected)
 
     auto discovered = Vertex<const char*>::Status::d;
     auto not_found = Vertex<const char*>::Status::nf;
-
-    g.Depth();
-    ASSERT_EQ(a->s, discovered);
-    ASSERT_EQ(b->s, discovered);
-    ASSERT_EQ(c->s, discovered);
-    ASSERT_EQ(a->t_found, 1);
-    ASSERT_EQ(b->t_found, 2);
-    ASSERT_EQ(c->t_found, 3);
-    ASSERT_EQ(a->t_disc, 6);
-    ASSERT_EQ(b->t_disc, 5);
-    ASSERT_EQ(c->t_disc, 4);
-    ASSERT_THAT(a->p, IsNull());
-    ASSERT_THAT(b->p, Eq(a));
-    ASSERT_THAT(c->p, Eq(b));
+    
+    for (Vertex<const char*>* v : vs) {
+        g.Depth(v);
+        if (v == a) {
+            ASSERT_EQ(a->s, discovered);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 1);
+            ASSERT_EQ(b->t_found, 2);
+            ASSERT_EQ(c->t_found, 3);
+            ASSERT_EQ(a->t_disc, 6);
+            ASSERT_EQ(b->t_disc, 5);
+            ASSERT_EQ(c->t_disc, 4);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, Eq(a));
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else if (v == b) {
+            ASSERT_EQ(a->s, not_found);
+            ASSERT_EQ(b->s, discovered);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 0);
+            ASSERT_EQ(b->t_found, 1);
+            ASSERT_EQ(c->t_found, 2);
+            ASSERT_EQ(a->t_disc, 0);
+            ASSERT_EQ(b->t_disc, 4);
+            ASSERT_EQ(c->t_disc, 3);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, Eq(b));
+        }
+        else {
+            ASSERT_EQ(a->s, not_found);
+            ASSERT_EQ(b->s, not_found);
+            ASSERT_EQ(c->s, discovered);
+            ASSERT_EQ(a->t_found, 0);
+            ASSERT_EQ(b->t_found, 0);
+            ASSERT_EQ(c->t_found, 1);
+            ASSERT_EQ(a->t_disc, 0);
+            ASSERT_EQ(b->t_disc, 0);
+            ASSERT_EQ(c->t_disc, 2);
+            ASSERT_THAT(a->p, IsNull());
+            ASSERT_THAT(b->p, IsNull());
+            ASSERT_THAT(c->p, IsNull());
+        }
+    }
 }
 
 TEST_F(GraphTest, ShortestPathUndirected)
