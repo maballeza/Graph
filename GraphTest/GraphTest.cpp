@@ -422,4 +422,68 @@ TEST_F(GraphTest, ShortestPathDirected)
     }
 }
 
-TEST_F(GraphTest, Transpose) {}
+TEST_F(GraphTest, TransposeUndirected)
+{
+    Graph<const char*>& g = this->undirected;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    Vertex<const char*> v_a { std::move("a") };
+    Vertex<const char*> v_b { std::move("b") };
+    Vertex<const char*> v_c { std::move("c") };
+
+    g.Transpose();
+
+    for (Vertex<const char*>* v : vs) {
+        auto edges = g.Edges(v);
+        if (v == a) {
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), Pointee(v_b));
+            ASSERT_THAT(edges.Search("c"), IsNull());
+        }
+        else if (v == b) {
+            ASSERT_THAT(edges.Search("a"), Pointee(v_a));
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), Pointee(v_c));
+        }
+        else {
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), Pointee(v_b));
+            ASSERT_THAT(edges.Search("c"), IsNull());
+        }
+    }
+}
+
+TEST_F(GraphTest, TransposeDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    Vertex<const char*> v_a { std::move("a") };
+    Vertex<const char*> v_b { std::move("b") };
+    Vertex<const char*> v_c { std::move("c") };
+
+    g.Transpose();
+
+    for (Vertex<const char*>* v : vs) {
+        auto edges = g.Edges(v);
+        if (v == a) {
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
+        }
+        else if (v == b) {
+            ASSERT_THAT(edges.Search("a"), Pointee(v_a));
+            ASSERT_THAT(edges.Search("b"), IsNull());
+            ASSERT_THAT(edges.Search("c"), IsNull());
+        }
+        else {
+            ASSERT_THAT(edges.Search("a"), IsNull());
+            ASSERT_THAT(edges.Search("b"), Pointee(v_b));
+            ASSERT_THAT(edges.Search("c"), IsNull());
+        }
+    }
+}
