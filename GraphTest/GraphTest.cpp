@@ -72,61 +72,53 @@ TEST_F(GraphTest, MatchingEdgesDirected)
 TEST_F(GraphTest, InDegreeUndirected)
 {
     Graph<const char*>& g = this->undirected;
-    auto set = g.VertexSet();
-
-    for (Vertex<const char*>* v : set) {
-        if (v->item != "b") {
-            ASSERT_EQ(g.InDegree(v), 1);
-        }
-        else {
-            ASSERT_EQ(g.InDegree(v), 2);
-        }
-    }
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    
+    ASSERT_THAT(g.InDegree(a), Eq(1));
+    ASSERT_THAT(g.InDegree(b), Eq(2));
+    ASSERT_THAT(g.InDegree(c), Eq(1));
 }
 
 TEST_F(GraphTest, InDegreeDirected)
 {
     Graph<const char*>& g = this->directed;
-    auto set = g.VertexSet();
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
     
-    for (Vertex<const char*>* v : set) {
-        if (v->item != "a") {
-            ASSERT_EQ(g.InDegree(v), 1);
-        }
-        else {
-            ASSERT_EQ(g.InDegree(v), 0);
-        }
-    }
+    ASSERT_THAT(g.InDegree(a), Eq(0));
+    ASSERT_THAT(g.InDegree(b), Eq(1));
+    ASSERT_THAT(g.InDegree(c), Eq(1));
 }
 
 TEST_F(GraphTest, OutDegreeUndirected)
 {
     Graph<const char*>& g = this->undirected;
-    auto set = g.VertexSet();
-    
-    for (Vertex<const char*>* v : set) {
-        if (v->item != "b") {
-            ASSERT_EQ(g.OutDegree(v), 1);
-        }
-        else {
-            ASSERT_EQ(g.OutDegree(v), 2);
-        }
-    }
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    ASSERT_THAT(g.OutDegree(a), Eq(1));
+    ASSERT_THAT(g.OutDegree(b), Eq(2));
+    ASSERT_THAT(g.OutDegree(c), Eq(1));
 }
 
 TEST_F(GraphTest, OutDegreeDirected)
 {
     Graph<const char*>& g = this->directed;
-    auto set = g.VertexSet();
+    auto vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
 
-    for (Vertex<const char*>* v : set) {
-        if (v->item != "c") {
-            ASSERT_EQ(g.OutDegree(v), 1);
-        }
-        else {
-            ASSERT_EQ(g.OutDegree(v), 0);
-        }
-    }
+    ASSERT_THAT(g.OutDegree(a), Eq(1));
+    ASSERT_THAT(g.OutDegree(b), Eq(1));
+    ASSERT_THAT(g.OutDegree(c), Eq(0));
 }
 
 TEST_F(GraphTest, BreadthUndirected)
@@ -139,42 +131,38 @@ TEST_F(GraphTest, BreadthUndirected)
     
     auto discovered = Vertex<const char*>::Status::d;
     
-    for (Vertex<const char*>* v : vs) {
-        g.Breadth(v);
-        if (v == a) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 0);
-            ASSERT_EQ(b->dist, 1);
-            ASSERT_EQ(c->dist, 2);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, Eq(a));
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else if (v == b) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 1);
-            ASSERT_EQ(b->dist, 0);
-            ASSERT_EQ(c->dist, 1);
-            ASSERT_THAT(a->p, Eq(b));
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 2);
-            ASSERT_EQ(b->dist, 1);
-            ASSERT_EQ(c->dist, 0);
-            ASSERT_THAT(a->p, Eq(b));
-            ASSERT_THAT(b->p, Eq(c));
-            ASSERT_THAT(c->p, IsNull());
-        }
-    }
+    g.Breadth(a);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 0);
+    ASSERT_EQ(b->dist, 1);
+    ASSERT_EQ(c->dist, 2);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+        
+    g.Breadth(b);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 1);
+    ASSERT_EQ(b->dist, 0);
+    ASSERT_EQ(c->dist, 1);
+    ASSERT_THAT(a->p, Eq(b));
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, Eq(b));
+        
+    g.Breadth(c);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 2);
+    ASSERT_EQ(b->dist, 1);
+    ASSERT_EQ(c->dist, 0);
+    ASSERT_THAT(a->p, Eq(b));
+    ASSERT_THAT(b->p, Eq(c));
+    ASSERT_THAT(c->p, IsNull());
 }
 
 TEST_F(GraphTest, BreadthDirected)
@@ -188,42 +176,38 @@ TEST_F(GraphTest, BreadthDirected)
     auto discovered = Vertex<const char*>::Status::d;
     auto not_found = Vertex<const char*>::Status::nf;
     
-    for (Vertex<const char*>* v : vs) {
-        g.Breadth(v);
-        if (v == a) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 0);
-            ASSERT_EQ(b->dist, 1);
-            ASSERT_EQ(c->dist, 2);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, Eq(a));
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else if (v == b) {
-            ASSERT_EQ(a->s, not_found);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 100000);
-            ASSERT_EQ(b->dist, 0);
-            ASSERT_EQ(c->dist, 1);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else {
-            ASSERT_EQ(a->s, not_found);
-            ASSERT_EQ(b->s, not_found);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->dist, 100000);
-            ASSERT_EQ(b->dist, 100000);
-            ASSERT_EQ(c->dist, 0);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, IsNull());
-        }
-    }
+    g.Breadth(a);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 0);
+    ASSERT_EQ(b->dist, 1);
+    ASSERT_EQ(c->dist, 2);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+    
+    g.Breadth(b);
+    ASSERT_EQ(a->s, not_found);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 100000);
+    ASSERT_EQ(b->dist, 0);
+    ASSERT_EQ(c->dist, 1);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, Eq(b));
+
+    g.Breadth(c);
+    ASSERT_EQ(a->s, not_found);
+    ASSERT_EQ(b->s, not_found);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->dist, 100000);
+    ASSERT_EQ(b->dist, 100000);
+    ASSERT_EQ(c->dist, 0);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, IsNull());
 }
 
 TEST_F(GraphTest, DepthUndirected)
@@ -237,51 +221,47 @@ TEST_F(GraphTest, DepthUndirected)
     auto discovered = Vertex<const char*>::Status::d;
     auto not_found = Vertex<const char*>::Status::nf;
     
-    for (Vertex<const char*>* v : vs) {
-        g.Depth(v);
-        if (v == a) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 1);
-            ASSERT_EQ(b->t_found, 2);
-            ASSERT_EQ(c->t_found, 3);
-            ASSERT_EQ(a->t_disc, 6);
-            ASSERT_EQ(b->t_disc, 5);
-            ASSERT_EQ(c->t_disc, 4);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, Eq(a));
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else if (v == b) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 4);
-            ASSERT_EQ(b->t_found, 1);
-            ASSERT_EQ(c->t_found, 2);
-            ASSERT_EQ(a->t_disc, 5);
-            ASSERT_EQ(b->t_disc, 6);
-            ASSERT_EQ(c->t_disc, 3);
-            ASSERT_THAT(a->p, Eq(b));
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 3);
-            ASSERT_EQ(b->t_found, 2);
-            ASSERT_EQ(c->t_found, 1);
-            ASSERT_EQ(a->t_disc, 4);
-            ASSERT_EQ(b->t_disc, 5);
-            ASSERT_EQ(c->t_disc, 6);
-            ASSERT_THAT(a->p, Eq(b));
-            ASSERT_THAT(b->p, Eq(c));
-            ASSERT_THAT(c->p, IsNull());
-        }
-    }
+    g.Depth(a);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 1);
+    ASSERT_EQ(b->t_found, 2);
+    ASSERT_EQ(c->t_found, 3);
+    ASSERT_EQ(a->t_disc, 6);
+    ASSERT_EQ(b->t_disc, 5);
+    ASSERT_EQ(c->t_disc, 4);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+        
+    g.Depth(b);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 4);
+    ASSERT_EQ(b->t_found, 1);
+    ASSERT_EQ(c->t_found, 2);
+    ASSERT_EQ(a->t_disc, 5);
+    ASSERT_EQ(b->t_disc, 6);
+    ASSERT_EQ(c->t_disc, 3);
+    ASSERT_THAT(a->p, Eq(b));
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, Eq(b));
+        
+    g.Depth(c);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 3);
+    ASSERT_EQ(b->t_found, 2);
+    ASSERT_EQ(c->t_found, 1);
+    ASSERT_EQ(a->t_disc, 4);
+    ASSERT_EQ(b->t_disc, 5);
+    ASSERT_EQ(c->t_disc, 6);
+    ASSERT_THAT(a->p, Eq(b));
+    ASSERT_THAT(b->p, Eq(c));
+    ASSERT_THAT(c->p, IsNull());
 }
 
 TEST_F(GraphTest, DepthDirected)
@@ -295,51 +275,47 @@ TEST_F(GraphTest, DepthDirected)
     auto discovered = Vertex<const char*>::Status::d;
     auto not_found = Vertex<const char*>::Status::nf;
     
-    for (Vertex<const char*>* v : vs) {
-        g.Depth(v);
-        if (v == a) {
-            ASSERT_EQ(a->s, discovered);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 1);
-            ASSERT_EQ(b->t_found, 2);
-            ASSERT_EQ(c->t_found, 3);
-            ASSERT_EQ(a->t_disc, 6);
-            ASSERT_EQ(b->t_disc, 5);
-            ASSERT_EQ(c->t_disc, 4);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, Eq(a));
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else if (v == b) {
-            ASSERT_EQ(a->s, not_found);
-            ASSERT_EQ(b->s, discovered);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 0);
-            ASSERT_EQ(b->t_found, 1);
-            ASSERT_EQ(c->t_found, 2);
-            ASSERT_EQ(a->t_disc, 0);
-            ASSERT_EQ(b->t_disc, 4);
-            ASSERT_EQ(c->t_disc, 3);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, Eq(b));
-        }
-        else {
-            ASSERT_EQ(a->s, not_found);
-            ASSERT_EQ(b->s, not_found);
-            ASSERT_EQ(c->s, discovered);
-            ASSERT_EQ(a->t_found, 0);
-            ASSERT_EQ(b->t_found, 0);
-            ASSERT_EQ(c->t_found, 1);
-            ASSERT_EQ(a->t_disc, 0);
-            ASSERT_EQ(b->t_disc, 0);
-            ASSERT_EQ(c->t_disc, 2);
-            ASSERT_THAT(a->p, IsNull());
-            ASSERT_THAT(b->p, IsNull());
-            ASSERT_THAT(c->p, IsNull());
-        }
-    }
+    g.Depth(a);
+    ASSERT_EQ(a->s, discovered);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 1);
+    ASSERT_EQ(b->t_found, 2);
+    ASSERT_EQ(c->t_found, 3);
+    ASSERT_EQ(a->t_disc, 6);
+    ASSERT_EQ(b->t_disc, 5);
+    ASSERT_EQ(c->t_disc, 4);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, Eq(a));
+    ASSERT_THAT(c->p, Eq(b));
+    
+    g.Depth(b);
+    ASSERT_EQ(a->s, not_found);
+    ASSERT_EQ(b->s, discovered);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 0);
+    ASSERT_EQ(b->t_found, 1);
+    ASSERT_EQ(c->t_found, 2);
+    ASSERT_EQ(a->t_disc, 0);
+    ASSERT_EQ(b->t_disc, 4);
+    ASSERT_EQ(c->t_disc, 3);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, Eq(b));
+    
+    g.Depth(c);
+    ASSERT_EQ(a->s, not_found);
+    ASSERT_EQ(b->s, not_found);
+    ASSERT_EQ(c->s, discovered);
+    ASSERT_EQ(a->t_found, 0);
+    ASSERT_EQ(b->t_found, 0);
+    ASSERT_EQ(c->t_found, 1);
+    ASSERT_EQ(a->t_disc, 0);
+    ASSERT_EQ(b->t_disc, 0);
+    ASSERT_EQ(c->t_disc, 2);
+    ASSERT_THAT(a->p, IsNull());
+    ASSERT_THAT(b->p, IsNull());
+    ASSERT_THAT(c->p, IsNull());
 }
 
 TEST_F(GraphTest, ShortestPathUndirected)
@@ -353,33 +329,29 @@ TEST_F(GraphTest, ShortestPathUndirected)
     Vertex<const char*> v_b { std::move("b") };
     Vertex<const char*> v_c { std::move("c") };
     
-    for (Vertex<const char*>* v : vs) {
-        g.Breadth(v);
-        if (v == a) {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
-        }
-        else if (v == b) {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
-        }
-        else {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre(Pointee(v_c), Pointee(v_b), Pointee(v_a)));
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre(Pointee(v_c), Pointee(v_b)));
-        }
-    }
+    g.Breadth(a);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    
+    g.Breadth(b);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    
+    g.Breadth(c);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre(Pointee(v_c), Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre(Pointee(v_c), Pointee(v_b)));
 }
 
 TEST_F(GraphTest, ShortestPathDirected)
@@ -393,33 +365,29 @@ TEST_F(GraphTest, ShortestPathDirected)
     Vertex<const char*> v_b { std::move("b") };
     Vertex<const char*> v_c { std::move("c") };
 
-    for (Vertex<const char*>* v : vs) {
-        g.Breadth(v);
-        if (v == a) {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
-        }
-        else if (v == b) {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
-        }
-        else {
-            EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
-            EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
-        }
-    }
+    g.Breadth(a);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    
+    g.Breadth(b);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    
+    g.Breadth(c);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
 }
 
 TEST_F(GraphTest, TransposeUndirected)
