@@ -21,6 +21,7 @@ struct Vertex : BaseNode<I> {
     bool operator==(const Vertex& v) const { return this->item == v.item; }
     bool IncidentTo(Vertex* v) { return this == v->p; }
     bool IncidentFrom(Vertex* v) { return v == p; }
+    void ShortestPath(Vertex* v, std::vector<Vertex*>&);
 
     Status s;
     int dist;     // Distance        -> Graph::Breadth()
@@ -30,6 +31,24 @@ struct Vertex : BaseNode<I> {
     Vertex* next;
     Vertex* prev;
 };
+
+template <typename I>
+void Vertex<I>::ShortestPath(Vertex* v, std::vector<Vertex*>& path)
+{
+    if (v == this) {
+        path.push_back(this);
+    }
+    else if (v == nullptr) {
+        path.clear();
+        return;
+    }
+    else {
+        ShortestPath(v->p, path);
+        if (!path.empty()) {
+            path.push_back(v);
+        }
+    }
+}
 
 template <typename T>
 using V = Vertex<T>;
@@ -106,24 +125,6 @@ bool Vertices<I>::InGraph(Vertex* w)
 }
 
 template <typename I>
-void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
-{
-    if (v == s) {
-        path.push_back(s);
-    }
-    else if (v == nullptr) {
-        path.clear();
-        return;
-    }
-    else {
-        ShortestPath(s, v->p, path);
-        if (!path.empty()) {
-            path.push_back(v);
-        }
-    }
-}
-
-template <typename I>
 GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
 {
     List l;
@@ -132,6 +133,14 @@ GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
     }
     ++count;
     return l;
+}
+
+template <typename I>
+void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
+{
+    if (s) {
+        s->ShortestPath(v, path);
+    }
 }
 
 template <typename I>
