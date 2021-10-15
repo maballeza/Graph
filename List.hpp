@@ -13,7 +13,8 @@ public:
     
     struct Iterator {
         explicit Iterator(Node* n) : np{ n } {}
-        Node* operator*() { return np; }
+        Node operator*() { return *np; }
+        Node* operator&() { return np; }
         Iterator& operator++() { np = np->next; return *this; }
         bool operator!=(const Iterator& ni) { return np != ni.np; }
     private:

@@ -12,7 +12,7 @@ public:
     {};
     struct Iterator : list_iterator {
         explicit Iterator(Vertex* v, GraphList* g);
-        Vertex* operator*();
+        Vertex* operator*(); // Deliberate departure from convention.
         GraphList* g;
     };
 
@@ -33,25 +33,24 @@ GraphList<I>::Iterator::Iterator(Vertex* v, GraphList* g)
 template <typename I>
 V<I>* GraphList<I>::Iterator::operator*()
 {
-    Vertex* v = List<V, I>::Iterator::operator*();
-    if (v) {
-        g->Normalize(&v, g);
-    }
-    return v;
+    Vertex v = List<V, I>::Iterator::operator*();
+    Vertex* w = &v;
+    g->Normalize(&w, g);
+    return w;
 }
 
 template <typename I>
 typename GraphList<I>::Iterator GraphList<I>::begin()
 {
-    auto It = List<V, I>::begin();
-    return Iterator{ *It, this };
+    Vertex* v = &List<V, I>::begin();
+    return Iterator{ v, this };
 }
 
 template <typename I>
 typename GraphList<I>::Iterator GraphList<I>::end()
 {
-    auto It = List<V, I>::end();
-    return Iterator{ *It, this };
+    Vertex* v = &List<V, I>::end();
+    return Iterator{ v, this };
 }
 
 template <typename I>
