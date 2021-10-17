@@ -28,9 +28,6 @@ public:
 
     List& operator=(List&& l) noexcept;
     bool operator==(List& l) { return head == l.head; }
-    Node* operator[](int i) {
-        return Search(I{ i });
-    }
 
     /**
     *   Enables range-for loop usage.
