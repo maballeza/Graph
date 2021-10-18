@@ -36,6 +36,8 @@ public:
 
 private:
     Vertex* AcquireVertex(I&& list_head);
+    void AddVertex(const std::vector<I>& list);
+    void AddVertices(const std::vector<std::vector<I>>& lists);
     bool InGraph(Vertex*);
     static void Reset(Graph& g, Vertex* s = nullptr);
     static bool NotFound(const Vertex*);
@@ -49,14 +51,10 @@ private:
 };
 
 template <typename I>
-Graph<I>::Graph(const std::vector<std::vector<I>>& incidentals) noexcept
-    : vertices{ incidentals.size() }, time{}
+Graph<I>::Graph(const std::vector<std::vector<I>>& incidentals_list) noexcept
+    : vertices{ incidentals_list.size() }, time{}
 {
-    for (const std::vector<I>& list : incidentals) {
-        auto head = list.begin();
-        Vertex* v = AcquireVertex(std::forward<I>(I{ *head }));
-        vertices.AttachVertex(v, { ++head, list.end() });
-    }
+    AddVertices(incidentals_list);
 }
 
 template <typename I>
@@ -72,6 +70,22 @@ Graph<I>::~Graph()
     for (Vertex* v : vertices.set) {
         delete v;
         v = nullptr;
+    }
+}
+
+template <typename I>
+void Graph<I>::AddVertex(const std::vector<I>& incidentals)
+{
+    auto head = incidentals.begin();
+    Vertex* v = AcquireVertex(std::forward<I>(I{ *head }));
+    vertices.AttachVertex(v, { ++head, incidentals.end() });
+}
+
+template <typename I>
+void Graph<I>::AddVertices(const std::vector<std::vector<I>>& incidentals_list)
+{
+    for (const std::vector<I>& incidentals : incidentals_list) {
+        AddVertex(incidentals);
     }
 }
 
