@@ -73,6 +73,7 @@ public:
     auto begin() { return set.begin(); }
     auto end() { return set.end(); }
 
+    void AddRelations(const std::vector<I>&, Vertex*);
     void AttachVertex(Vertex*, const std::vector<I>&);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Transpose();
@@ -82,8 +83,6 @@ public:
     std::vector<Vertex*> set;
 
 private:
-    List AttachVertex(const std::vector<I>&);
-
     Edges edges;
     int total;  // == |edges|
     int count;  // Running total.
@@ -114,9 +113,20 @@ GraphList<I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
+void Vertices<I>::AddRelations(const std::vector<I>& incidentals, Vertex* v)
+{
+    List l;
+    for (I item : incidentals) {
+        l.Insert(I{ item });
+    }
+    ++count;
+    edges[v] = std::move(l);
+}
+
+template <typename I>
 void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incidentals)
 {
-    edges[v] = AttachVertex(incidentals);
+    AddRelations(incidentals, v);
     edges[v].set = &set;
     set.push_back(v);
 }
@@ -152,17 +162,6 @@ bool Vertices<I>::InGraph(Vertex* w)
         }
     }
     return false;
-}
-
-template <typename I>
-GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incidentals)
-{
-    List l;
-    for (I item : incidentals) {
-        l.Insert(std::forward<I>(item));
-    }
-    ++count;
-    return l;
 }
 
 template <typename I>
