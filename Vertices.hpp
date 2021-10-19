@@ -114,25 +114,11 @@ GraphList<I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
-bool Vertices<I>::InGraph(Vertex* w)
+void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incidentals)
 {
-    for (auto v : set) {
-        if (v == w) {
-            return true;
-        }
-    }
-    return false;
-}
-
-template <typename I>
-GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incident_vs)
-{
-    List l;
-    for (I item : incident_vs) {
-        l.Insert(std::forward<I>(item));
-    }
-    ++count;
-    return l;
+    edges[v] = AttachVertex(incidentals);
+    edges[v].set = &set;
+    set.push_back(v);
 }
 
 template <typename I>
@@ -141,14 +127,6 @@ void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
     if (s) {
         s->ShortestPath(v, path);
     }
-}
-
-template <typename I>
-void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incident_vs)
-{
-    edges[v] = AttachVertex(incident_vs);
-    edges[v].set = &set;
-    set.push_back(v);
 }
 
 template <typename I>
@@ -163,6 +141,28 @@ void Vertices<I>::Transpose()
         }
     }
     edges = std::move(edges_t);
+}
+
+template <typename I>
+bool Vertices<I>::InGraph(Vertex* w)
+{
+    for (auto v : set) {
+        if (v == w) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template <typename I>
+GraphList<I> Vertices<I>::AttachVertex(const std::vector<I>& incidentals)
+{
+    List l;
+    for (I item : incidentals) {
+        l.Insert(std::forward<I>(item));
+    }
+    ++count;
+    return l;
 }
 
 template <typename I>
