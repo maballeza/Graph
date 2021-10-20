@@ -21,6 +21,7 @@ public:
     
     Vertex* Search(const I& i);
     void Normalize(Vertex**, GraphList* g);
+    void RemoveRelation(Vertex* relation);
 
     std::vector<Vertex*>* set{};
 };
@@ -76,5 +77,14 @@ void GraphList<I>::Normalize(Vertex** list_v, GraphList* g)
     }
     else {
         throw set_uninitialized{};
+    }
+}
+
+
+template <typename I>
+void GraphList<I>::RemoveRelation(Vertex* relation)
+{
+    if (auto v = List<V, I>::Search(std::move(relation->item))) {
+        List<V, I>::Delete(&v);
     }
 }

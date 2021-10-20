@@ -455,3 +455,35 @@ TEST_F(GraphTest, TransposeDirected)
         }
     }
 }
+
+TEST_F(GraphTest, RemoveVertexUndirected)
+{
+    Graph<const char*>& g = this->undirected;
+    auto& vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    g.RemoveVertex(c);
+    ASSERT_THAT(g.InDegree(b), Eq(1));
+    ASSERT_THAT(g.OutDegree(b), Eq(1));
+    
+    auto edges = g.Edges(b);
+    ASSERT_THAT(edges.Search("c"), IsNull());
+}
+
+TEST_F(GraphTest, RemoveVertexDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto& vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    g.RemoveVertex(c);
+    ASSERT_THAT(g.InDegree(b), Eq(1));
+    ASSERT_THAT(g.OutDegree(b), Eq(0));
+    
+    auto edges = g.Edges(b);
+    ASSERT_THAT(edges.Search("c"), IsNull());
+}

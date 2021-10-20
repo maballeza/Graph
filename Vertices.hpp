@@ -19,6 +19,7 @@ struct Vertex : BaseNode<I> {
     }
     ~Vertex() = default;
     bool operator==(const Vertex& v) const { return this->item == v.item; }
+    bool operator!=(const Vertex& v) const { return !(this->item == v.item); }
     bool IncidentTo(Vertex* v) { return this == v->p; }
     bool IncidentFrom(Vertex* v) { return v == p; }
     void ShortestPath(Vertex* v, std::vector<Vertex*>&);
@@ -75,6 +76,8 @@ public:
 
     void AddRelations(const std::vector<I>&, Vertex*);
     void AttachVertex(Vertex*, const std::vector<I>&);
+    void RemoveRelation(Vertex* source, Vertex* relation);
+    void RemoveVertex(Vertex*);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Transpose();
     bool InGraph(Vertex*);
@@ -129,6 +132,27 @@ void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incidentals)
     AddRelations(incidentals, v);
     edges[v].set = &set;
     set.push_back(v);
+}
+
+template <typename I>
+void Vertices<I>::RemoveRelation(Vertex* s, Vertex* v)
+{
+    edges[s].RemoveRelation(v);
+}
+
+template <typename I>
+void Vertices<I>::RemoveVertex(Vertex* v)
+{
+    if (edges.erase(v)) {
+        for (auto u : set) {
+            if (u != v) {
+                RemoveRelation(u, v);
+            }
+        }
+        set.erase(std::remove_if(set.begin(), set.end(),
+            [&](Vertex* u) { return u == v; }), set.end());
+        --total;
+    }
 }
 
 template <typename I>

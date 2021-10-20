@@ -22,6 +22,7 @@ public:
     Graph(Graph&&) noexcept;
     ~Graph();
 
+    void RemoveVertex(Vertex*);
     void Breadth(Vertex*);
     void Depth(Vertex*);
     std::vector<Vertex*> ShortestPath(Vertex* s, Vertex* v);
@@ -87,6 +88,12 @@ void Graph<I>::AddVertices(const std::vector<std::vector<I>>& incidentals_list)
     for (const std::vector<I>& incidentals : incidentals_list) {
         AddVertex(incidentals);
     }
+}
+
+template <typename I>
+void Graph<I>::RemoveVertex(Vertex* v)
+{
+    vertices.RemoveVertex(v);
 }
 
 template <typename I>
