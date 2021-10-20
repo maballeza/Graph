@@ -23,6 +23,7 @@ struct Vertex : BaseNode<I> {
     bool IncidentTo(Vertex* v) { return this == v->p; }
     bool IncidentFrom(Vertex* v) { return v == p; }
     void ShortestPath(Vertex* v, std::vector<Vertex*>&);
+    static void Reset(Vertex*, bool);
 
     Status s;
     int dist;     // Distance        -> Graph::Breadth()
@@ -48,6 +49,23 @@ void Vertex<I>::ShortestPath(Vertex* v, std::vector<Vertex*>& path)
         if (!path.empty()) {
             path.push_back(v);
         }
+    }
+}
+
+template <typename I>
+void Vertex<I>::Reset(Vertex* v, bool source)
+{
+    if (source) {
+        v->s = Vertex::Status::f;
+        v->dist = 0;
+        v->p = nullptr;
+    }
+    else {
+        v->dist = 100000;
+        v->s = Vertex::Status::nf;
+        v->t_disc = 0;
+        v->t_found = 0;
+        v->p = nullptr;
     }
 }
 
@@ -158,7 +176,7 @@ void Vertices<I>::RemoveVertex(Vertex* v)
 template <typename I>
 void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
 {
-    if (s) {
+    if (InGraph(v)) {
         s->ShortestPath(v, path);
     }
 }

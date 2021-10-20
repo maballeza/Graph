@@ -467,9 +467,9 @@ TEST_F(GraphTest, RemoveVertexUndirected)
     g.RemoveVertex(c);
     ASSERT_THAT(g.InDegree(b), Eq(1));
     ASSERT_THAT(g.OutDegree(b), Eq(1));
-    
-    auto edges = g.Edges(b);
-    ASSERT_THAT(edges.Search("c"), IsNull());
+    ASSERT_THAT(g.Edges(b).Search("c"), IsNull());
+    ASSERT_THAT(g.ShortestPath(a, c), ElementsAre());
+    ASSERT_THAT(g.ShortestPath(b, c), ElementsAre());
 }
 
 TEST_F(GraphTest, RemoveVertexDirected)
@@ -483,7 +483,7 @@ TEST_F(GraphTest, RemoveVertexDirected)
     g.RemoveVertex(c);
     ASSERT_THAT(g.InDegree(b), Eq(1));
     ASSERT_THAT(g.OutDegree(b), Eq(0));
-    
-    auto edges = g.Edges(b);
-    ASSERT_THAT(edges.Search("c"), IsNull());
+    ASSERT_THAT(g.Edges(b).Search("c"), IsNull());
+    ASSERT_THAT(g.ShortestPath(a, c), ElementsAre());
+    ASSERT_THAT(g.ShortestPath(b, c), ElementsAre());
 }

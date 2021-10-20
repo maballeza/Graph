@@ -94,6 +94,7 @@ template <typename I>
 void Graph<I>::RemoveVertex(Vertex* v)
 {
     vertices.RemoveVertex(v);
+    Graph::Reset(*this);
 }
 
 template <typename I>
@@ -112,18 +113,7 @@ template <typename I>
 void Graph<I>::Reset(Graph& g, Vertex* source)
 {
     for (Vertex* v : g.vertices) {
-        if (v != source) {
-            v->dist = 100000;
-            v->s = Vertex::Status::nf;
-            v->t_disc = 0;
-            v->t_found = 0;
-            v->p = nullptr;
-        }
-    }
-    if (source) {
-        source->s = Vertex::Status::f;
-        source->dist = 0;
-        source->p = nullptr;
+        Vertex::Reset(v, v == source);
     }
     g.time = 0;
 }
@@ -212,7 +202,9 @@ template <typename I>
 std::vector<Vertex<I>*> Graph<I>::ShortestPath(Vertex* s, Vertex* v)
 {
     std::vector<Vertex*> path;
-    vertices.ShortestPath(s, v, path);
+    if (s && v) {
+        vertices.ShortestPath(s, v, path);
+    }
     return path;
 }
 
