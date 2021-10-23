@@ -98,7 +98,7 @@ public:
     void RemoveVertex(Vertex*);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
     void Transpose();
-    bool InGraph(Vertex*);
+    Vertex* Search(const I&);
     int Size() { return set.size(); }
 
     std::vector<Vertex*> set;
@@ -136,12 +136,12 @@ GraphList<I>& Vertices<I>::operator[](Vertex* v)
 template <typename I>
 void Vertices<I>::AddRelations(const std::vector<I>& incidentals, Vertex* v)
 {
-    List l;
-    for (I item : incidentals) {
-        l.Insert(I{ item });
+    if (!incidentals.empty()) {
+        ++count;
+        for (I item : incidentals) {
+            edges[v].Insert(I{ item });
+        }
     }
-    ++count;
-    edges[v] = std::move(l);
 }
 
 template <typename I>
@@ -176,9 +176,7 @@ void Vertices<I>::RemoveVertex(Vertex* v)
 template <typename I>
 void Vertices<I>::ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>& path)
 {
-    if (InGraph(v)) {
-        s->ShortestPath(v, path);
-    }
+    s->ShortestPath(Search(v->item), path);
 }
 
 template <typename I>
@@ -196,14 +194,14 @@ void Vertices<I>::Transpose()
 }
 
 template <typename I>
-bool Vertices<I>::InGraph(Vertex* w)
+V<I>* Vertices<I>::Search(const I& item)
 {
     for (auto v : set) {
-        if (v == w) {
-            return true;
+        if (v->item == item) {
+            return v;
         }
     }
-    return false;
+    return nullptr;
 }
 
 template <typename I>

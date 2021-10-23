@@ -487,3 +487,150 @@ TEST_F(GraphTest, RemoveVertexDirected)
     ASSERT_THAT(g.ShortestPath(a, c), ElementsAre());
     ASSERT_THAT(g.ShortestPath(b, c), ElementsAre());
 }
+
+TEST_F(GraphTest, AddVertexUndirected)
+{
+    Graph<const char*>& g = undirected;
+    auto& vs = g.VertexSet();
+
+    g.AddVertex({ "c", "d" });
+    g.AddVertex({ "d", "c" });
+
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+    auto d = vs[3];
+    Vertex<const char*> v_a { std::move("a") };
+    Vertex<const char*> v_b { std::move("b") };
+    Vertex<const char*> v_c { std::move("c") };
+    Vertex<const char*> v_d { std::move("d") };
+
+    g.Breadth(a);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre(Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(b);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre(Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(c);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre(Pointee(v_c), Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre(Pointee(v_c), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(d);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre(Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre(Pointee(v_c), Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre(Pointee(v_c), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre(Pointee(v_d), Pointee(v_c), Pointee(v_b), Pointee(v_a)));
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre(Pointee(v_d), Pointee(v_c), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre(Pointee(v_d), Pointee(v_c)));
+}
+
+TEST_F(GraphTest, AddVertexDirected)
+{
+    Graph<const char*>& g = this->directed;
+    auto& vs = g.VertexSet();
+    auto a = vs[0];
+    auto b = vs[1];
+    auto c = vs[2];
+
+    g.AddVertex({ "c", "d" });
+
+    auto d = vs[3];
+    Vertex<const char*> v_a{ std::move("a") };
+    Vertex<const char*> v_b{ std::move("b") };
+    Vertex<const char*> v_c{ std::move("c") };
+    Vertex<const char*> v_d{ std::move("d") };
+
+    g.Breadth(a);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre(Pointee(v_a), Pointee(v_b)));
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre(Pointee(v_a), Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre(Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(b);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre(Pointee(v_b), Pointee(v_c)));
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre(Pointee(v_b), Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(c);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre(Pointee(v_c), Pointee(v_d)));
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+
+    g.Breadth(d);
+    EXPECT_THAT(g.ShortestPath(a, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(a, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, c), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(b, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(c, d), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, a), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, b), ElementsAre());
+    EXPECT_THAT(g.ShortestPath(d, c), ElementsAre());
+}
