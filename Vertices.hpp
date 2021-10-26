@@ -42,7 +42,6 @@ void Vertex<I>::ShortestPath(Vertex* v, std::vector<Vertex*>& path)
     }
     else if (v == nullptr) {
         path.clear();
-        return;
     }
     else {
         ShortestPath(v->p, path);
@@ -92,8 +91,8 @@ public:
     auto begin() { return set.begin(); }
     auto end() { return set.end(); }
 
-    void AddRelations(const std::vector<I>&, Vertex*);
-    void AttachVertex(Vertex*, const std::vector<I>&);
+    void AddRelations(Vertex*, const std::vector<I>&);
+    void AddVertex(Vertex*, const std::vector<I>&);
     void RemoveRelation(Vertex* source, Vertex* relation);
     void RemoveVertex(Vertex*);
     void ShortestPath(Vertex* s, Vertex* v, std::vector<Vertex*>&);
@@ -134,7 +133,7 @@ GraphList<I>& Vertices<I>::operator[](Vertex* v)
 }
 
 template <typename I>
-void Vertices<I>::AddRelations(const std::vector<I>& incidentals, Vertex* v)
+void Vertices<I>::AddRelations(Vertex* v, const std::vector<I>& incidentals)
 {
     if (!incidentals.empty()) {
         ++count;
@@ -145,9 +144,9 @@ void Vertices<I>::AddRelations(const std::vector<I>& incidentals, Vertex* v)
 }
 
 template <typename I>
-void Vertices<I>::AttachVertex(Vertex* v, const std::vector<I>& incidentals)
+void Vertices<I>::AddVertex(Vertex* v, const std::vector<I>& incidentals)
 {
-    AddRelations(incidentals, v);
+    AddRelations(v, incidentals);
     edges[v].set = &set;
     set.push_back(v);
 }

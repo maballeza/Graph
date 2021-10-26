@@ -82,11 +82,11 @@ void Graph<I>::AddVertex(const std::vector<I>& v_incidentals)
         std::vector<I> incidentals { head + 1, end };
         
         if (Vertex* v = vertices.Search(*head)) {
-            vertices.AddRelations(incidentals, v);
+            vertices.AddRelations(v, incidentals);
         }
         else {
             v = AcquireVertex(std::forward<I>(I{ *head }));
-            vertices.AttachVertex(v, incidentals);
+            vertices.AddVertex(v, incidentals);
         }
 
         for (auto i : incidentals) {
@@ -190,7 +190,6 @@ void Graph<I>::Depth(Graph& g, Vertex* source)
     for (Vertex* v : stand_in) {
         if (!source_found && v != source) {
             stand_in.push_back(v);
-            continue;
         }
         else if (NotFound(v)) {
             source_found = true;
