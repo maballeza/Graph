@@ -215,8 +215,8 @@ struct Summary {
     {
     }
 
-    void Print() const { os << String(); }
-    string String() const { return Header() + Body(); }
+    void Print() const {}
+    string String() const {}
     void ShortestPath(std::vector<Vertex*>&, std::ostream&);
 
 private:
